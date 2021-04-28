@@ -26,6 +26,9 @@ void CGattAuthDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_DEVICES, lvDevices);
 	DDX_Control(pDX, IDC_LIST_LOG, lbLog);
+	DDX_Control(pDX, IDC_BUTTON_DISCOVER, btDiscover);
+	DDX_Control(pDX, IDC_BUTTON_CONNECT, btConnect);
+	DDX_Control(pDX, IDC_BUTTON_DISCONNECT, btDisconnect);
 }
 
 BEGIN_MESSAGE_MAP(CGattAuthDlg, CDialog)
@@ -37,6 +40,7 @@ BEGIN_MESSAGE_MAP(CGattAuthDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_DISCOVER, &CGattAuthDlg::OnBnClickedButtonDiscover)
 	ON_BN_CLICKED(IDC_BUTTON_DISCONNECT, &CGattAuthDlg::OnBnClickedButtonDisconnect)
 	ON_BN_CLICKED(IDC_BUTTON_CONNECT, &CGattAuthDlg::OnBnClickedButtonConnect)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_DEVICES, &CGattAuthDlg::OnLvnItemchangedListDevices)
 END_MESSAGE_MAP()
 
 
@@ -54,6 +58,9 @@ BOOL CGattAuthDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 	lvDevices.InsertColumn(0, _T("Address"), 0, 150);
 	lvDevices.InsertColumn(1, _T("Name"), 0, 150);
+
+	btConnect.EnableWindow(FALSE);
+	btDisconnect.EnableWindow(FALSE);
 
 	__hook(&CwclBluetoothManager::AfterOpen, &wclBluetoothManager, &CGattAuthDlg::wclBluetoothManagerAfterOpen);
 	__hook(&CwclBluetoothManager::OnClosed, &wclBluetoothManager, &CGattAuthDlg::wclBluetoothManagerClosed);
@@ -195,6 +202,8 @@ void CGattAuthDlg::OnBnClickedButtonDiscover()
 		Res = Radio->Discover(10, dkBle);
 		if (Res != WCL_E_SUCCESS)
 			Trace(_T("Start discovering failed"), Res);
+		else
+			btDiscover.EnableWindow(FALSE);
 	}
 }
 
@@ -237,7 +246,11 @@ void CGattAuthDlg::wclBluetoothManagerDiscoveringCompleted(void* Sender, CwclBlu
 					Trace(_T("Device ") + Addr + _T(" is not paired"));
 			}
 		}
-	}}
+	}
+
+	btDiscover.EnableWindow(TRUE);
+	btConnect.EnableWindow(lvDevices.GetFirstSelectedItemPosition() != NULL);
+}
 
 void CGattAuthDlg::wclBluetoothManagerDeviceFound(void* Sender, CwclBluetoothRadio* Radio,
 	__int64 Address)
@@ -302,12 +315,22 @@ void CGattAuthDlg::wclGattClientDisconnect(void* Sender, int Reason)
 		Trace(_T("Unpair failed"), Res);
 	else
 		Trace(_T("Device unpaired"));
+
+	btDiscover.EnableWindow(TRUE);
+	btDisconnect.EnableWindow(FALSE);
+	btConnect.EnableWindow(lvDevices.GetFirstSelectedItemPosition() != NULL);
 }
 
 void CGattAuthDlg::wclGattClientConnect(void* Sender, int Error)
 {
 	if (Error != WCL_E_SUCCESS)
+	{
 		Trace(_T("Connect failed"), Error);
+
+		btDiscover.EnableWindow(TRUE);
+		btDisconnect.EnableWindow(FALSE);
+		btConnect.EnableWindow(lvDevices.GetFirstSelectedItemPosition() != NULL);
+	}
 	else
 	{
 		Trace(_T("Connected. Try to pair"));
@@ -351,8 +374,27 @@ void CGattAuthDlg::OnBnClickedButtonConnect()
 				if (Res != WCL_E_SUCCESS)
 					Trace(_T("Connect failed"), Res);
 				else
+				{
 					Trace(_T("Connecting"));
+
+					btConnect.EnableWindow(FALSE);
+					btDisconnect.EnableWindow(TRUE);
+					btDiscover.EnableWindow(FALSE);
+				}
 			}
 		}
 	}
+}
+
+void CGattAuthDlg::OnLvnItemchangedListDevices(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	*pResult = 0;
+
+	BOOL Enabled = !btDiscover.EnableWindow(FALSE);
+	btDiscover.EnableWindow(Enabled); 
+	
+	btConnect.EnableWindow(lvDevices.GetFirstSelectedItemPosition() != NULL &&
+		Enabled && wclGattClient.GetState() == csDisconnected);
 }

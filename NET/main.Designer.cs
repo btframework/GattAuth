@@ -63,6 +63,7 @@ namespace GattAuth
             this.lvDevices.TabIndex = 1;
             this.lvDevices.UseCompatibleStateImageBehavior = false;
             this.lvDevices.View = System.Windows.Forms.View.Details;
+            this.lvDevices.SelectedIndexChanged += new System.EventHandler(this.lvDevices_SelectedIndexChanged);
             // 
             // chAddress
             // 
@@ -76,6 +77,7 @@ namespace GattAuth
             // 
             // btConnect
             // 
+            this.btConnect.Enabled = false;
             this.btConnect.Location = new System.Drawing.Point(12, 144);
             this.btConnect.Name = "btConnect";
             this.btConnect.Size = new System.Drawing.Size(75, 23);
@@ -86,6 +88,7 @@ namespace GattAuth
             // 
             // btDisconnect
             // 
+            this.btDisconnect.Enabled = false;
             this.btDisconnect.Location = new System.Drawing.Point(93, 144);
             this.btDisconnect.Name = "btDisconnect";
             this.btDisconnect.Size = new System.Drawing.Size(75, 23);

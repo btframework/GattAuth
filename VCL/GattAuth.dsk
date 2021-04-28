@@ -55,9 +55,9 @@ BottomPanelData=00000400010000000B0000004D65737361676556696577000000000000000000
 
 [View0]
 Module=D:\Projects\Shared Projects\Windows\GattAuth\VCL\main.pas
-CursorX=7
-CursorY=277
-TopLine=245
+CursorX=17
+CursorY=317
+TopLine=313
 LeftCol=1
 
 [Watches]
@@ -128,7 +128,7 @@ LRDockWidth=190
 Dockable=1
 SplitPos=85
 ArrangeBy=Name
-SelectedItem=Caption
+SelectedItem=HideSelection
 ExpandedItems=
 HiddenCategories=
 

@@ -42,10 +42,12 @@ object fmMain: TfmMain
       end>
     ColumnClick = False
     GridLines = True
+    HideSelection = False
     ReadOnly = True
     RowSelect = True
     TabOrder = 1
     ViewStyle = vsReport
+    OnSelectItem = lvDevicesSelectItem
   end
   object btConnect: TButton
     Left = 8
@@ -53,6 +55,7 @@ object fmMain: TfmMain
     Width = 75
     Height = 25
     Caption = 'Connect'
+    Enabled = False
     TabOrder = 2
     OnClick = btConnectClick
   end
@@ -62,6 +65,7 @@ object fmMain: TfmMain
     Width = 75
     Height = 25
     Caption = 'Disconnect'
+    Enabled = False
     TabOrder = 3
     OnClick = btDisconnectClick
   end

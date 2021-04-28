@@ -75,4 +75,10 @@ public:
 	afx_msg void OnBnClickedButtonDiscover();
 	afx_msg void OnBnClickedButtonDisconnect();
 	afx_msg void OnBnClickedButtonConnect();
+private:
+	CButton btDiscover;
+	CButton btConnect;
+	CButton btDisconnect;
+public:
+	afx_msg void OnLvnItemchangedListDevices(NMHDR *pNMHDR, LRESULT *pResult);
 };

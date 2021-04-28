@@ -41,6 +41,8 @@ type
       const Radio: TwclBluetoothRadio; const Address: Int64;
       const Error: Integer);
     procedure btConnectClick(Sender: TObject);
+    procedure lvDevicesSelectItem(Sender: TObject; Item: TListItem;
+      Selected: Boolean);
 
   private
     procedure Trace(const Msg: string); overload;
@@ -104,10 +106,13 @@ begin
   Res := wclBluetoothManager.GetRadio(Radio);
   if Res <> WCL_E_SUCCESS then
     Trace('Get working radio failed', Res)
+
   else begin
     Res := Radio.Discover(10, dkBle);
     if Res <> WCL_E_SUCCESS then
-      Trace('Start discovering failed', Res);
+      Trace('Start discovering failed', Res)
+    else
+      btDiscover.Enabled := False;
   end;
 end;
 
@@ -133,13 +138,16 @@ begin
     for i := 0 to lvDevices.Items.Count - 1 do begin
       Item := lvDevices.Items[i];
       Mac := StrToInt64('$' + Item.Caption);
+
       Res := Radio.GetRemoteName(Mac, Name);
       if Res <> WCL_E_SUCCESS then
         Name := 'Error: 0x' + IntToHex(Res, 8);
       Item.SubItems.Add(Name);
+
       Res := Radio.GetRemotePaired(Mac, Paired);
       if Res <> WCL_E_SUCCESS then
         Trace('Get paired status failed', Res)
+
       else begin
         if Paired then begin
           Res := Radio.RemoteUnpair(Mac);
@@ -147,11 +155,15 @@ begin
             Trace('Failed unpair device ' + Item.Caption, Res)
           else
             Trace('Device ' + Item.Caption + ' unpaired');
+
         end else
           Trace('Device ' + Item.Caption + ' is not paired');
       end;
     end;
   end;
+
+  btDiscover.Enabled := True;
+  btConnect.Enabled := lvDevices.Selected <> nil;
 end;
 
 procedure TfmMain.wclBluetoothManagerDeviceFound(Sender: TObject;
@@ -184,6 +196,10 @@ begin
     Trace('Unpair failed', Res)
   else
     Trace('Device unpaired');
+
+  btDiscover.Enabled := True;
+  btDisconnect.Enabled := False;
+  btConnect.Enabled := lvDevices.Selected <> nil;
 end;
 
 procedure TfmMain.wclGattClientConnect(Sender: TObject;
@@ -191,9 +207,14 @@ procedure TfmMain.wclGattClientConnect(Sender: TObject;
 var
   Res: Integer;
 begin
-  if Error <> WCL_E_SUCCESS then
-    Trace('Connect failed', Error)
-  else begin
+  if Error <> WCL_E_SUCCESS then begin
+    Trace('Connect failed', Error);
+
+    btDiscover.Enabled := True;
+    btDisconnect.Enabled := False;
+    btConnect.Enabled := lvDevices.Selected <> nil;
+
+  end else begin
     Trace('Connected. Try to pair');
     Res := wclGattClient.Radio.RemotePair(wclGattClient.Address);
     if Res <> WCL_E_SUCCESS then begin
@@ -231,14 +252,17 @@ begin
   if Error <> WCL_E_SUCCESS then begin
     Trace('Authentication failed', Error);
     wclGattClient.Disconnect;
+
   end else begin
     Trace('Paired. Read services');
     Res := wclGattClient.ReadServices(goNone, Services);
     if Res <> WCL_E_SUCCESS then
       Trace('Read services failed', Res)
+
     else begin
       if Length(Services) = 0 then
         Trace('No services were found')
+
       else begin
         for i := 0 to Length(Services) - 1 do begin
           Service := Services[i];
@@ -257,24 +281,40 @@ var
 begin
   if lvDevices.Selected = nil then
     Trace('Select device')
+
   else begin
     Res := wclBluetoothManager.GetRadio(Radio);
     if Res <> WCL_E_SUCCESS then
       Trace('Get working radio failed', Res)
+
     else begin
       Mac := StrToInt64('$' + lvDevices.Selected.Caption);
       if wclGattClient.State <> csDisconnected then
         Trace('Already conencted')
+
       else begin
         wclGattClient.Address := Mac;
         Res := wclGattClient.Connect(Radio);
         if Res <> WCL_E_SUCCESS then
           Trace('Connect failed', Res)
-        else
+
+        else begin
           Trace('Connecting');
+
+          btConnect.Enabled := False;
+          btDisconnect.Enabled := True;
+          btDiscover.Enabled := False;
+        end;
       end;
     end;
   end;
+end;
+
+procedure TfmMain.lvDevicesSelectItem(Sender: TObject; Item: TListItem;
+  Selected: Boolean);
+begin
+  btConnect.Enabled := (lvDevices.Selected <> nil) and btDiscover.Enabled
+    and (wclGattClient.State = csDisconnected);
 end;
 
 end.

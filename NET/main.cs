@@ -84,7 +84,13 @@ namespace GattAuth
         private void WclGattClient_OnConnect(object Sender, int Error)
         {
             if (Error != wclErrors.WCL_E_SUCCESS)
+            {
                 Trace("Connect failed", Error);
+
+                btDiscover.Enabled = true;
+                btDisconnect.Enabled = false;
+                btConnect.Enabled = (lvDevices.SelectedItems.Count > 0);
+            }
             else
             {
                 Trace("Connected. Try to pair");
@@ -106,6 +112,10 @@ namespace GattAuth
                 Trace("Unpair failed", Res);
             else
                 Trace("Device unpaired");
+
+            btDiscover.Enabled = true;
+            btDisconnect.Enabled = false;
+            btConnect.Enabled = (lvDevices.SelectedItems.Count > 0);
         }
 
         private void WclBluetoothManager_OnDeviceFound(object Sender, wclBluetoothRadio Radio, long Address)
@@ -145,6 +155,9 @@ namespace GattAuth
                     }
                 }
             }
+
+            btDiscover.Enabled = true;
+            btConnect.Enabled = (lvDevices.SelectedItems.Count > 0);
         }
 
         private void WclBluetoothManager_OnDiscoveringStarted(object Sender, wclBluetoothRadio Radio)
@@ -194,6 +207,8 @@ namespace GattAuth
                 Res = Radio.Discover(10, wclBluetoothDiscoverKind.dkBle);
                 if (Res != wclErrors.WCL_E_SUCCESS)
                     Trace("Start discovering failed", Res);
+                else
+                    btDiscover.Enabled = false;
             }
         }
 
@@ -226,10 +241,22 @@ namespace GattAuth
                         if (Res != wclErrors.WCL_E_SUCCESS)
                             Trace("Connect failed", Res);
                         else
+                        {
                             Trace("Connecting");
+
+                            btConnect.Enabled = false;
+                            btDisconnect.Enabled = true;
+                            btDiscover.Enabled = false;
+                        }
                     }
                 }
             }
+        }
+
+        private void lvDevices_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            btConnect.Enabled = (lvDevices.SelectedItems.Count > 0 && btDiscover.Enabled
+                && wclGattClient.State == wclClientState.csDisconnected);
         }
     }
 }
