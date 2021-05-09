@@ -83,8 +83,8 @@ ProductVersion=1.0.0.0
 Comments=
 [HistoryLists\hlConditionals]
 Count=2
-Item0=_WCL_DEMO_
-Item1=_WCL_DEBUG_
+Item0=_WCL_DEBUG_
+Item1=_WCL_DEMO_
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
