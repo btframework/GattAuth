@@ -42,32 +42,36 @@ private:
 	CListCtrl lvDevices;
 	CListBox lbLog;
 
-	CString IntToHex(int i);
-	CString IntToHex(__int64 i);
-	CString IntToStr(int i);
-	CString IntToHex(unsigned short i);
-	__int64 StrToInt64(CString s);
+	CString IntToHex(const int i) const;
+	CString IntToHex(const __int64 i) const;
+	CString IntToStr(const int i) const;
+	CString IntToHex(const unsigned short i) const;
+	__int64 StrToInt64(const CString& s) const;
 
-	void Trace(CString Msg);
-	void Trace(CString Msg, int Error);
+	void Trace(const CString& Msg);
+	void Trace(const CString& Msg, const int Error);
 
 	void wclBluetoothManagerAfterOpen(void* Sender);
 	void wclBluetoothManagerClosed(void* Sender);
 	
-	void wclBluetoothManagerDiscoveringStarted(void* Sender, CwclBluetoothRadio* Radio);
-	void wclBluetoothManagerDiscoveringCompleted(void* Sender, CwclBluetoothRadio* Radio,
-		int Error);
-	void wclBluetoothManagerDeviceFound(void* Sender, CwclBluetoothRadio* Radio,
-		__int64 Address);
-	void wclBluetoothManagerConfirm(void* Sender, CwclBluetoothRadio* Radio,
-		__int64 Address, bool& Confirm);
-	void wclBluetoothManagerNumericComparison(void* Sender, CwclBluetoothRadio* Radio,
-		__int64 Address, unsigned long Number, bool& Confirm);
-	void wclBluetoothManagerAuthenticationCompleted(void* Sender, CwclBluetoothRadio* Radio,
-		__int64 Address, int Error);
+	void wclBluetoothManagerDiscoveringStarted(void* Sender,
+		CwclBluetoothRadio* const Radio);
+	void wclBluetoothManagerDiscoveringCompleted(void* Sender,
+		CwclBluetoothRadio* const Radio, const int Error);
+	void wclBluetoothManagerDeviceFound(void* Sender,
+		CwclBluetoothRadio* const Radio, const __int64 Address);
+	void wclBluetoothManagerConfirm(void* Sender,
+		CwclBluetoothRadio* const Radio, const __int64 Address,
+		bool& Confirm);
+	void wclBluetoothManagerNumericComparison(void* Sender,
+		CwclBluetoothRadio* const Radio, const __int64 Address, 
+		const unsigned long Number, bool& Confirm);
+	void wclBluetoothManagerAuthenticationCompleted(void* Sender,
+		CwclBluetoothRadio* const Radio, const __int64 Address,
+		const int Error);
 
-	void wclGattClientDisconnect(void* Sender, int Reason);
-	void wclGattClientConnect(void* Sender, int Error);
+	void wclGattClientDisconnect(void* Sender, const int Reason);
+	void wclGattClientConnect(void* Sender, const int Error);
     
 public:
 	afx_msg void OnBnClickedButtonClear();

@@ -62,21 +62,27 @@ BOOL CGattAuthDlg::OnInitDialog()
 	btConnect.EnableWindow(FALSE);
 	btDisconnect.EnableWindow(FALSE);
 
-	__hook(&CwclBluetoothManager::AfterOpen, &wclBluetoothManager, &CGattAuthDlg::wclBluetoothManagerAfterOpen);
-	__hook(&CwclBluetoothManager::OnClosed, &wclBluetoothManager, &CGattAuthDlg::wclBluetoothManagerClosed);
+	__hook(&CwclBluetoothManager::AfterOpen, &wclBluetoothManager,
+		&CGattAuthDlg::wclBluetoothManagerAfterOpen);
+	__hook(&CwclBluetoothManager::OnClosed, &wclBluetoothManager,
+		&CGattAuthDlg::wclBluetoothManagerClosed);
 	__hook(&CwclBluetoothManager::OnDiscoveringStarted, &wclBluetoothManager,
 		&CGattAuthDlg::wclBluetoothManagerDiscoveringStarted);
 	__hook(&CwclBluetoothManager::OnDiscoveringCompleted, &wclBluetoothManager,
 		&CGattAuthDlg::wclBluetoothManagerDiscoveringCompleted);
-	__hook(&CwclBluetoothManager::OnDeviceFound, &wclBluetoothManager, &CGattAuthDlg::wclBluetoothManagerDeviceFound);
-	__hook(&CwclBluetoothManager::OnConfirm, &wclBluetoothManager, &CGattAuthDlg::wclBluetoothManagerConfirm);
+	__hook(&CwclBluetoothManager::OnDeviceFound, &wclBluetoothManager,
+		&CGattAuthDlg::wclBluetoothManagerDeviceFound);
+	__hook(&CwclBluetoothManager::OnConfirm, &wclBluetoothManager,
+		&CGattAuthDlg::wclBluetoothManagerConfirm);
 	__hook(&CwclBluetoothManager::OnNumericComparison, &wclBluetoothManager,
 		&CGattAuthDlg::wclBluetoothManagerNumericComparison);
 	__hook(&CwclBluetoothManager::OnAuthenticationCompleted, &wclBluetoothManager,
 		&CGattAuthDlg::wclBluetoothManagerAuthenticationCompleted);
 
-	__hook(&CwclGattClient::OnDisconnect, &wclGattClient, &CGattAuthDlg::wclGattClientDisconnect);
-	__hook(&CwclGattClient::OnConnect, &wclGattClient, &CGattAuthDlg::wclGattClientConnect);
+	__hook(&CwclGattClient::OnDisconnect, &wclGattClient,
+		&CGattAuthDlg::wclGattClientDisconnect);
+	__hook(&CwclGattClient::OnConnect, &wclGattClient,
+		&CGattAuthDlg::wclGattClientConnect);
 
 	int Res = wclBluetoothManager.Open();
 	if (Res != WCL_E_SUCCESS)
@@ -121,14 +127,14 @@ HCURSOR CGattAuthDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-CString CGattAuthDlg::IntToHex(int i)
+CString CGattAuthDlg::IntToHex(const int i) const
 {
 	CString s;
 	s.Format(_T("%.8X"), i);
 	return s;
 }
 
-CString CGattAuthDlg::IntToHex(__int64 i)
+CString CGattAuthDlg::IntToHex(const __int64 i) const
 {
 	CString s;
 	s.Format(_T("%.4X%.8X"), static_cast<INT32>((i >> 32) & 0x00000FFFF),
@@ -136,23 +142,23 @@ CString CGattAuthDlg::IntToHex(__int64 i)
 	return s;
 }
 
-CString CGattAuthDlg::IntToStr(int i)
+CString CGattAuthDlg::IntToStr(int i) const
 {
 	CString s;
 	s.Format(_T("%d"), i);
 	return s;
 }
 
-CString CGattAuthDlg::IntToHex(unsigned short i)
+CString CGattAuthDlg::IntToHex(const unsigned short i) const
 {
 	CString s;
 	s.Format(_T("%.4X"), i);
 	return s;
 }
 
-__int64 CGattAuthDlg::StrToInt64(CString s)
+__int64 CGattAuthDlg::StrToInt64(const CString& s) const
 {
-	return _tcstoi64(s.GetBuffer(), NULL, 16);
+	return _tcstoi64(s, NULL, 16);
 }
 
 void CGattAuthDlg::OnBnClickedButtonClear()
@@ -160,12 +166,12 @@ void CGattAuthDlg::OnBnClickedButtonClear()
 	lbLog.ResetContent();
 }
 
-void CGattAuthDlg::Trace(CString Msg)
+void CGattAuthDlg::Trace(const CString& Msg)
 {
 	lbLog.AddString(Msg);
 }
 
-void CGattAuthDlg::Trace(CString Msg, int Error)
+void CGattAuthDlg::Trace(const CString& Msg, const int Error)
 {
 	Trace(Msg + _T(": 0x") + IntToHex(Error));
 }
@@ -183,11 +189,15 @@ void CGattAuthDlg::OnClose()
 
 void CGattAuthDlg::wclBluetoothManagerAfterOpen(void* Sender)
 {
+	UNREFERENCED_PARAMETER(Sender);
+
 	Trace(_T("Bluetooth Manager has been opened"));
 }
 
 void CGattAuthDlg::wclBluetoothManagerClosed(void* Sender)
 {
+	UNREFERENCED_PARAMETER(Sender);
+
 	Trace(_T("Bluetooth Manager has been closed"));
 }
 
@@ -207,15 +217,20 @@ void CGattAuthDlg::OnBnClickedButtonDiscover()
 	}
 }
 
-void CGattAuthDlg::wclBluetoothManagerDiscoveringStarted(void* Sender, CwclBluetoothRadio* Radio)
+void CGattAuthDlg::wclBluetoothManagerDiscoveringStarted(void* Sender,
+	CwclBluetoothRadio* const Radio)
 {
-	  Trace(_T("Discovering started on radio: ") + CString(Radio->GetApiName().c_str()));
-	  lvDevices.DeleteAllItems();
+	UNREFERENCED_PARAMETER(Sender);
+	
+	Trace(_T("Discovering started on radio: ") + CString(Radio->GetApiName().c_str()));
+	lvDevices.DeleteAllItems();
 }
 
-void CGattAuthDlg::wclBluetoothManagerDiscoveringCompleted(void* Sender, CwclBluetoothRadio* Radio,
-	int Error)
+void CGattAuthDlg::wclBluetoothManagerDiscoveringCompleted(void* Sender,
+	CwclBluetoothRadio* const Radio, const int Error)
 {
+	UNREFERENCED_PARAMETER(Sender);
+
 	Trace(_T("Discovering completed with result"), Error);
 	if (lvDevices.GetItemCount() > 0)
 	{
@@ -252,31 +267,48 @@ void CGattAuthDlg::wclBluetoothManagerDiscoveringCompleted(void* Sender, CwclBlu
 	btConnect.EnableWindow(lvDevices.GetFirstSelectedItemPosition() != NULL);
 }
 
-void CGattAuthDlg::wclBluetoothManagerDeviceFound(void* Sender, CwclBluetoothRadio* Radio,
-	__int64 Address)
+void CGattAuthDlg::wclBluetoothManagerDeviceFound(void* Sender,
+	CwclBluetoothRadio* const Radio, const __int64 Address)
 {
+	UNREFERENCED_PARAMETER(Sender);
+	UNREFERENCED_PARAMETER(Radio);
+
 	int Item = lvDevices.GetItemCount();
 	lvDevices.InsertItem(Item, IntToHex(Address));
 	lvDevices.SetItemText(Item, 1, _T(""));
 }
 
-void CGattAuthDlg::wclBluetoothManagerConfirm(void* Sender, CwclBluetoothRadio* Radio,
-	__int64 Address, bool& Confirm)
+void CGattAuthDlg::wclBluetoothManagerConfirm(void* Sender,
+	CwclBluetoothRadio* const Radio, const __int64 Address, bool& Confirm)
 {
+	UNREFERENCED_PARAMETER(Sender);
+	UNREFERENCED_PARAMETER(Radio);
+	UNREFERENCED_PARAMETER(Address);
+
 	Trace(_T("On confirm pairing (Just Works)"));
 	Confirm = true;
 }
 
-void CGattAuthDlg::wclBluetoothManagerNumericComparison(void* Sender, CwclBluetoothRadio* Radio,
-	__int64 Address, unsigned long Number, bool& Confirm)
+void CGattAuthDlg::wclBluetoothManagerNumericComparison(void* Sender,
+	CwclBluetoothRadio* const Radio, const __int64 Address, 
+	const unsigned long Number, bool& Confirm)
 {
+	UNREFERENCED_PARAMETER(Sender);
+	UNREFERENCED_PARAMETER(Radio);
+	UNREFERENCED_PARAMETER(Address);
+	UNREFERENCED_PARAMETER(Number);
+
 	Trace(_T("Numeric comparison pairing"));
 	Confirm = true;
 }
 
-void CGattAuthDlg::wclBluetoothManagerAuthenticationCompleted(void* Sender, CwclBluetoothRadio* Radio,
-	__int64 Address, int Error)
+void CGattAuthDlg::wclBluetoothManagerAuthenticationCompleted(void* Sender,
+	CwclBluetoothRadio* const Radio, const __int64 Address, const int Error)
 {
+	UNREFERENCED_PARAMETER(Sender);
+	UNREFERENCED_PARAMETER(Radio);
+	UNREFERENCED_PARAMETER(Address);
+
 	if (Error != WCL_E_SUCCESS)
 	{
 		Trace(_T("Authentication failed"), Error);
@@ -306,8 +338,10 @@ void CGattAuthDlg::wclBluetoothManagerAuthenticationCompleted(void* Sender, Cwcl
 	}
 }
 
-void CGattAuthDlg::wclGattClientDisconnect(void* Sender, int Reason)
+void CGattAuthDlg::wclGattClientDisconnect(void* Sender, const int Reason)
 {
+	UNREFERENCED_PARAMETER(Sender);
+
 	Trace(_T("Disconnected with reason"), Reason);
 	Trace(_T("Unpair with device"));
 	int Res = wclGattClient.GetRadio()->RemoteUnpair(wclGattClient.GetAddress());
@@ -321,8 +355,10 @@ void CGattAuthDlg::wclGattClientDisconnect(void* Sender, int Reason)
 	btConnect.EnableWindow(lvDevices.GetFirstSelectedItemPosition() != NULL);
 }
 
-void CGattAuthDlg::wclGattClientConnect(void* Sender, int Error)
+void CGattAuthDlg::wclGattClientConnect(void* Sender, const int Error)
 {
+	UNREFERENCED_PARAMETER(Sender);
+
 	if (Error != WCL_E_SUCCESS)
 	{
 		Trace(_T("Connect failed"), Error);
@@ -388,7 +424,9 @@ void CGattAuthDlg::OnBnClickedButtonConnect()
 
 void CGattAuthDlg::OnLvnItemchangedListDevices(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	UNREFERENCED_PARAMETER(pNMHDR);
+
+	//LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	// TODO: Add your control notification handler code here
 	*pResult = 0;
 
