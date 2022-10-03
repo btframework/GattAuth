@@ -1,4 +1,13 @@
 
 CPP/GattAuth.suo
+CPP/build/*.*
 NET/.vs/GattAuth/v16/.suo
 NET/.vs/GattAuth/v16/.suo
+*.htm
+*.exe
+*.obj
+*.pch
+*.pdb
+*.ncb
+*.user
+CPP/GattAuth.vcproj.MIKEPC.mike.user
