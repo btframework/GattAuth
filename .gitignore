@@ -11,3 +11,5 @@ NET/.vs/GattAuth/v16/.suo
 *.ncb
 *.user
 CPP/GattAuth.vcproj.MIKEPC.mike.user
+NET/bin/
+NET/obj/
