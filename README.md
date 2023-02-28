@@ -1,5 +1,5 @@
 # GattAuth
-Shows hwo to pair with GATT devices that requires authentication.
+Shows how to pair with GATT devices that requires authentication. The project uses [Bluetooth Framework](https://www.btframework.com/bluetoothframework.htm)
 
 ## Problem description
 
@@ -10,3 +10,5 @@ Some Bluetooth LE GATT devices may close the connection in short time or simple 
 ## How to solve the issue
 
 To solve this problem you have to connect to your device and only then pair with it. When device disconnects your application should unpair the device. In this case device will keep connection active as long as you need.
+
+Should you have any questions please do not hesitate to contact us at support@btframework.com
