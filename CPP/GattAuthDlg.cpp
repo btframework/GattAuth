@@ -222,7 +222,7 @@ void CGattAuthDlg::wclBluetoothManagerDiscoveringStarted(void* Sender,
 {
 	UNREFERENCED_PARAMETER(Sender);
 	
-	Trace(_T("Discovering started on radio: ") + CString(Radio->GetApiName().c_str()));
+	Trace(_T("Discovering started on radio: ") + CString(Radio->ApiName.c_str()));
 	lvDevices.DeleteAllItems();
 }
 
@@ -344,7 +344,7 @@ void CGattAuthDlg::wclGattClientDisconnect(void* Sender, const int Reason)
 
 	Trace(_T("Disconnected with reason"), Reason);
 	Trace(_T("Unpair with device"));
-	int Res = wclGattClient.GetRadio()->RemoteUnpair(wclGattClient.GetAddress());
+	int Res = wclGattClient.Radio->RemoteUnpair(wclGattClient.Address);
 	if (Res != WCL_E_SUCCESS)
 		Trace(_T("Unpair failed"), Res);
 	else
@@ -370,7 +370,7 @@ void CGattAuthDlg::wclGattClientConnect(void* Sender, const int Error)
 	else
 	{
 		Trace(_T("Connected. Try to pair"));
-		int Res = wclGattClient.GetRadio()->RemotePair(wclGattClient.GetAddress());
+		int Res = wclGattClient.Radio->RemotePair(wclGattClient.Address);
 		if (Res != WCL_E_SUCCESS)
 		{
 			Trace(_T("Pair failed"), Res);
@@ -401,11 +401,11 @@ void CGattAuthDlg::OnBnClickedButtonConnect()
 			Trace(_T("Get working radio failed"), Res);
 		else
 		{
-			if (wclGattClient.GetState() != csDisconnected)
+			if (wclGattClient.State != csDisconnected)
 				Trace(_T("Already conencted"));
 			else
 			{
-				wclGattClient.SetAddress(Mac);
+				wclGattClient.Address = Mac;
 				Res = wclGattClient.Connect(Radio);
 				if (Res != WCL_E_SUCCESS)
 					Trace(_T("Connect failed"), Res);
@@ -434,5 +434,5 @@ void CGattAuthDlg::OnLvnItemchangedListDevices(NMHDR *pNMHDR, LRESULT *pResult)
 	btDiscover.EnableWindow(Enabled); 
 	
 	btConnect.EnableWindow(lvDevices.GetFirstSelectedItemPosition() != NULL &&
-		Enabled && wclGattClient.GetState() == csDisconnected);
+		Enabled && wclGattClient.State == csDisconnected);
 }
