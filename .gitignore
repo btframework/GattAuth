@@ -1,15 +1,12 @@
+/**/bin
+/**/obj
+/**/build
+/**/__history
 
-CPP/GattAuth.suo
-CPP/build/*.*
-NET/.vs/GattAuth/v16/.suo
-NET/.vs/GattAuth/v16/.suo
-*.htm
-*.exe
-*.obj
-*.pch
-*.pdb
-*.ncb
+*.db
+*.suo
+*.local
+*.txt
+*.stat
+*.identcache
 *.user
-CPP/GattAuth.vcproj.MIKEPC.mike.user
-NET/bin/
-NET/obj/

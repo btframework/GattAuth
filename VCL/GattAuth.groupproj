@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{8CD31024-A27D-4DE0-8270-B794489B7339}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Delphi\GattAuthDelphi.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="CBuilder\GattAuthCBuilder.cbproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="GattAuthDelphi">
+        <MSBuild Projects="Delphi\GattAuthDelphi.dproj"/>
+    </Target>
+    <Target Name="GattAuthDelphi:Clean">
+        <MSBuild Projects="Delphi\GattAuthDelphi.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GattAuthDelphi:Make">
+        <MSBuild Projects="Delphi\GattAuthDelphi.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="GattAuthCBuilder">
+        <MSBuild Projects="CBuilder\GattAuthCBuilder.cbproj"/>
+    </Target>
+    <Target Name="GattAuthCBuilder:Clean">
+        <MSBuild Projects="CBuilder\GattAuthCBuilder.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GattAuthCBuilder:Make">
+        <MSBuild Projects="CBuilder\GattAuthCBuilder.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="GattAuthDelphi;GattAuthCBuilder"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="GattAuthDelphi:Clean;GattAuthCBuilder:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="GattAuthDelphi:Make;GattAuthCBuilder:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
