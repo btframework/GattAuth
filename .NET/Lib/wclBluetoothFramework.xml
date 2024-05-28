@@ -5957,11 +5957,11 @@
             <summary> Unable to set GATT local characteristic subscribed clients
               changed event handler. </summary>
         </member>
-        <member name="F:wclBluetooth.wclBluetoothErrors.WCL_E_BLUETOOTH_LE_GATT_SERVER_GET_CLIENTS_LIST_FAILED">
-            <summary> Unable to get list of the characteristic's subscribed clients. </summary>
+        <member name="F:wclBluetooth.wclBluetoothErrors.WCL_E_BLUETOOTH_LE_UNSUBSCRIBE_FAILED">
+            <summary> Unable to start unsubscribing thread. </summary>
         </member>
-        <member name="F:wclBluetooth.wclBluetoothErrors.WCL_E_BLUETOOTH_LE_GATT_SERVER_GET_CLIENTS_COUNT_FAILED">
-            <summary> Unable to get number of subscribed clients. </summary>
+        <member name="F:wclBluetooth.wclBluetoothErrors.WCL_E_BLUETOOTH_LE_INVALID_CONNECTION_PARAMETERS_VALUE">
+            <summary> One or more connection parameter values are not valid. </summary>
         </member>
         <member name="F:wclBluetooth.wclBluetoothErrors.WCL_E_BLUETOOTH_LE_GATT_SERVER_CHARACTERISTIC_NOT_NOTIFIABLE">
             <summary> Characteristic is not notifiable or indicatable. </summary>
@@ -6067,7 +6067,7 @@
         <member name="F:wclBluetooth.wclBluetoothErrors.WCL_E_BLUETOOTH_LE_EXT_ADV_NOT_SUPPORTED">
             <summary> The extended advertisement properties are not supported.
               Set the <c>UseExtendedAdvertisement</c> property of the
-              <c>TwclBluetoothLeAdvertiser</c> component to <c>False</c> and
+              <c>wclBluetoothLeAdvertiser</c> component to <c>False</c> and
               try to restart the advertisement. </summary>
         </member>
         <member name="F:wclBluetooth.wclBluetoothErrors.WCL_E_BLUETOOTH_LE_SET_EXT_ADV_FAILED">
@@ -6166,8 +6166,8 @@
         <member name="F:wclBluetooth.wclBluetoothErrors.WCL_E_BLUETOOTH_LE_SUBSCRIBE_FAILED">
             <summary> Unable to start subscribing thread. </summary>
         </member>
-        <member name="F:wclBluetooth.wclBluetoothErrors.WCL_E_BLUETOOTH_LE_UNSUBSCRIBE_FAILED">
-            <summary> Unable to start unsubscribing thread. </summary>
+        <member name="F:wclBluetooth.wclBluetoothErrors.WCL_E_BLUETOOTH_LE_GATT_SERVER_NO_SUBSCRIBED_CLIENTS">
+            <summary> No subscribed clients found. </summary>
         </member>
         <member name="F:wclBluetooth.wclBluetoothErrors.WCL_E_WII_REMOTE_BASE">
             <summary> The base error code for Wii Remote errors. </summary>
@@ -6464,6 +6464,7 @@
               When connection operation completed the <c>OnConnected</c> event will
               fire. The operation result will be passed into the <c>OnConnected</c>
               event. </remarks>
+            <seealso cref="T:wclBluetooth.wclBluetoothRadio" />
         </member>
         <member name="M:wclBluetooth.wclGattClient.Disconnect">
             <summary> Disconnects from a remote device. </summary>
@@ -7212,7 +7213,9 @@
         <member name="M:wclBluetooth.wclGattLocalCharacteristic.HalNotify(System.Int64,System.Byte[])">
             <summary> The function implements a driver specific code to send
               notification to the given subscribed client. </summary>
-            <param name="Address"> The client's MAC address. </param>
+            <param name="Address"> The client's MAC address. If the address
+              parameter is <c>0</c> the notification must be sent to all
+              subscribed clients. </param>
             <param name="Data"> The notification data. </param>
             <returns> If the function succeed the return value is
               <see cref="F:wclCommon.wclErrors.WCL_E_SUCCESS" />. Otherwise the method returns one of
@@ -7235,6 +7238,13 @@
             <seealso cref="T:wclBluetooth.wclGattUuid" />
             <seealso cref="T:wclBluetooth.wclGattLocalCharacteristicParameters" />
             <exception cref="T:wclCommon.wclECritical" />
+        </member>
+        <member name="M:wclBluetooth.wclGattLocalCharacteristic.Notify(System.Byte[])">
+            <summary> Sends notification to all subscribed clients. </summary>
+            <param name="Data"> The notification data. </param>
+            <returns> If the function succeed the return value is
+              <see cref="F:wclCommon.wclErrors.WCL_E_SUCCESS" />. Otherwise the method returns one of
+              the WCL error codes. </returns>
         </member>
         <member name="M:wclBluetooth.wclGattLocalCharacteristic.Notify(System.Int64,System.Byte[])">
             <summary> Sends notification to the given subscribed client. </summary>
