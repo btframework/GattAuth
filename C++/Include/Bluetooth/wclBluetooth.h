@@ -33,9 +33,6 @@ namespace wclBluetooth
 {
 	/* Some useful constants. */
 
-	/// <summary> Wii Remote HID report length. </summary>
-	#define WCL_WII_REMOTE_REPORT_LENGTH			22
-
 	/// <summary> The minimum allowed scan interval value (2.5ms) </summary>
 	#define WCL_BLE_MIN_SCAN_INTERVAL				4
 	/// <summary> The maximum allowed scan interval value (10.24s) </summary>
@@ -3443,7 +3440,9 @@ namespace wclBluetooth
 		///           <para> 9 - Bluetooth Core Specification 5.0 </para>
 		///           <para> 10 - Bluetooth Core Specification 5.1 </para>
 		///           <para> 11 - Bluetooth Core Specification 5.2 </para>
-		///           <para> 12-255 - Reserved </para> </remarks>
+		///           <para> 12 - Bluetooth Core Specification 5.3 </para>
+		///           <para> 13 - Bluetooth Core Specification 5.4 </para>
+		///           <para> 14-255 - Reserved </para> </remarks>
 		int GetHciVersion(unsigned char& Version, unsigned short& Revision);
 		/// <summary> Reads the LMP version of the local Radio module. </summary>
 		/// <param name="Version"> On output the LMP version number. </param>
@@ -3464,7 +3463,9 @@ namespace wclBluetooth
 		///           <para> 9 - Bluetooth Core Specification 5.0 </para>
 		///           <para> 10 - Bluetooth Core Specification 5.1 </para>
 		///           <para> 11 - Bluetooth Core Specification 5.2 </para>
-		///           <para> 12–255 - Reserved </para> </remarks>
+		///           <para> 12 - Bluetooth Core Specification 5.3 </para>
+		///           <para> 13 - Bluetooth Core Specification 5.4 </para>
+		///           <para> 14-255 - Reserved </para> </remarks>
 		int GetLmpVersion(unsigned char& Version, unsigned short& Subversion);
 		/// <summary> Reads the Bluetooth Radio manufacturer ID. </summary>
 		/// <param name="Manu"> On output the manufacturer ID. </param>
@@ -6912,6 +6913,7 @@ namespace wclBluetooth
 		DISABLE_COPY(CwclBluetoothLeBeaconWatcherConnection);
 		
 	private:
+		bool						FAllowExtendedAdvertisements;
 		bool						FMonitoring;
 		CwclBluetoothRadio*			FRadio;
 		unsigned short				FScanInterval;
@@ -7273,6 +7275,13 @@ namespace wclBluetooth
 		///   <see cref="WCL_BLE_MAX_SCAN_WINDOW" />. The default value is
 		///   <see cref="WCL_BLE_DEFAULT_SCAN_WINDOW" />. The scan window must be
 		///   less or equal to <c>ScanInterval</c>. </param>
+		/// <param name="AllowExtendedAdvertisements"> Set this parameter to
+		///   <c>true</c> to enable receiving advertisements of the Extended
+		///   Advertising format can be received. If this parameter set to
+		///   <c>true</c> and a hardware or OS does not support Extended
+		///   Advertisements the
+		///   <see cref="WCL_E_BLUETOOTH_LE_EXT_ADV_NOT_SUPPORTED" /> error will
+		///   be returned. </param>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
 		///   the WCL error codes. </returns>
@@ -7284,7 +7293,8 @@ namespace wclBluetooth
 		/// <seealso cref="WCL_BLE_MAX_SCAN_WINDOW" />
 		/// <seealso cref="WCL_BLE_DEFAULT_SCAN_WINDOW" />
 		int Start(const wclBluetoothLeScanningMode ScanningMode,
-			const unsigned short ScanInterval, const unsigned short ScanWindow);
+			const unsigned short ScanInterval, const unsigned short ScanWindow,
+			const bool AllowExtendedAdvertisements);
 		/// <summary> Stops monitoring for Bluetooth LE Beacons. </summary>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
@@ -7292,6 +7302,15 @@ namespace wclBluetooth
 		/// <remarks> This feature is supported on Windows 10 with the Microsoft
 		///   Bluetooth drivers only. </remarks>
 		int Stop();
+
+		/// <summary> Gets the Extended Advertisement receiving flag. </summary>
+		/// <returns> <c>true</c> if the receiving the Extended Advertisement is
+		///   enabled. <c>false</c> otherwise. </returns>
+		bool GetAllowExtendedAdvertisements() const;
+		/// <summary> Gets the Extended Advertisement receiving flag. </summary>
+		/// <value> <c>true</c> if the receiving the Extended Advertisement is
+		///   enabled. <c>false</c> otherwise. </value>
+		__declspec(property(get = GetAllowExtendedAdvertisements)) bool AllowExtendedAdvertisements;
 
 		/// <summary> Gets Beacon Monitoring state. </summary>
 		/// <returns> <c>True</c> if the Beacon monitoring is running. </returns>
@@ -11324,6 +11343,13 @@ namespace wclBluetooth
 		///   <see cref="WCL_BLE_MAX_SCAN_WINDOW" />. The default value is
 		///   <see cref="WCL_BLE_DEFAULT_SCAN_WINDOW" />. The scan window must be
 		///   less or equal to <c>ScanInterval</c>. </param>
+		/// <param name="AllowExtendedAdvertisements"> Set this parameter to
+		///   <c>true</c> to enable receiving advertisements of the Extended
+		///   Advertising format can be received. If this parameter set to
+		///   <c>true</c> and a hardware or OS does not support Extended
+		///   Advertisements the
+		///   <see cref="WCL_E_BLUETOOTH_LE_EXT_ADV_NOT_SUPPORTED" /> error will
+		///   be returned. </param>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
 		///   the WCL error codes. </returns>
@@ -11338,7 +11364,8 @@ namespace wclBluetooth
 		int Start(CwclBluetoothRadio* const Radio,
 			const wclBluetoothLeScanningMode ScanningMode = smActive,
 			const unsigned short ScanInterval = WCL_BLE_DEFAULT_SCAN_INTERVAL,
-			const unsigned short ScanWindow = WCL_BLE_DEFAULT_SCAN_WINDOW);
+			const unsigned short ScanWindow = WCL_BLE_DEFAULT_SCAN_WINDOW,
+			const bool AllowExtendedAdvertisements = false);
 		/// <summary> Stops monitoring for Bluetooth LE Beacons. </summary>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
@@ -11346,6 +11373,15 @@ namespace wclBluetooth
 		/// <remarks> This feature is supported on Windows 10 with the Microsoft
 		///   Bluetooth drivers only. </remarks>
 		int Stop();
+
+		/// <summary> Gets the Extended Advertisement receiving flag. </summary>
+		/// <returns> <c>true</c> if the receiving the Extended Advertisement is
+		///   enabled. <c>false</c> otherwise. </value>
+		bool GetAllowExtendedAdvertisements() const;
+		/// <summary> Gets the Extended Advertisement receiving flag. </summary>
+		/// <value> <c>true</c> if the receiving the Extended Advertisement is
+		///   enabled. <c>galse</c> otherwise. </value>
+		__declspec(property(get = GetAllowExtendedAdvertisements)) bool AllowExtendedAdvertisements;
 
 		/// <summary> Gets Beacon Monitoring state. </summary>
 		/// <returns> <c>True</c> if the Beacon monitoring is running. </returns>
