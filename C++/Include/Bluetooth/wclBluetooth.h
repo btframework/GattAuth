@@ -31,29 +31,6 @@ using namespace wclCommunication;
 
 namespace wclBluetooth
 {
-	/* Some useful constants. */
-
-	/// <summary> The minimum allowed scan interval value (2.5ms) </summary>
-	#define WCL_BLE_MIN_SCAN_INTERVAL				4
-	/// <summary> The maximum allowed scan interval value (10.24s) </summary>
-	#define WCL_BLE_MAX_SCAN_INTERVAL				16384
-	/// <summary> Default BLE scan interval value (118.125ms). </summary>
-	#define WCL_BLE_DEFAULT_SCAN_INTERVAL			189
-
-	/// <summary> The minimum allowed scan window value (2.5ms) </summary>
-	#define WCL_BLE_MIN_SCAN_WINDOW					4
-	/// <summary> The maximum allowed scan window value (10.24s) </summary>
-	#define WCL_BLE_MAX_SCAN_WINDOW					16384
-	/// <summary> Default BLE scan window value (18.125ms). </summary>
-	#define WCL_BLE_DEFAULT_SCAN_WINDOW				29
-
-	/// <summary> The minimum allowed advertising interval (20ms) </summary>
-	#define WCL_BLE_MIN_ADVERTISING_INTERVAL		32
-	/// <summary> The maximum allowed advertising interval (10.24s) </summary>
-	#define WCL_BLE_MAX_ADVERTISING_INTERVAL		16384
-	/// <summary> Default BLE advertising interval (100ms). </summary>
-	#define WCL_BLE_DEFAULT_ADVERTISING_INTERVAL	160
-
 	/* Forward declaration */
 
 	class CwclBluetoothRadio;
@@ -84,6 +61,41 @@ namespace wclBluetooth
 	///   Framework. </summary>
 	/// <seealso cref="wclBluetoothApi" />
 	typedef std::set<wclBluetoothApi> wclBluetoothApis;
+
+	/// <summary> Bluetooth versions. </summary>
+	typedef enum
+	{
+		/// <summary> Bluetooth 1.0b. </summary>
+		bt10,
+		/// <summary> Bluetooth 1.1. </summary>
+		bt11,
+		/// <summary> Bluetooth 1.2. </summary>
+		bt12,
+		/// <summary> Bluetooth 2.0 + EDR. </summary>
+		bt20,
+		/// <summary> Bluetooth 2.1 + EDR. </summary>
+		bt21,
+		/// <summary> Bluetooth 3.0 + HS. </summary>
+		bt30,
+		/// <summary> Bluetooth 4.0. </summary>
+		bt40,
+		/// <summary> Bluetooth 4.1. </summary>
+		bt41,
+		/// <summary> Bluetooth 4.2. </summary>
+		bt42,
+		/// <summary> Bluetooth 5.0. </summary>
+		bt50,
+		/// <summary> Bluetooth 5.1. </summary>
+		bt51,
+		/// <summary> Bluetooth 5.2. </summary>
+		bt52,
+		/// <summary> Bluetooth 5.3. </summary>
+		bt53,
+		/// <summary> Bluetooth 5.4. </summary>
+		bt54,
+		/// <summary> Other Bluetooth version. </summary>
+		btOther
+	} wclBluetoothVersion;
 
 	/// <summary> A remote device types. </summary>
 	typedef enum
@@ -947,7 +959,66 @@ namespace wclBluetooth
 		/// <seealso cref="wclBluetoothLeConnectionPhyInfo" />
 		wclBluetoothLeConnectionPhyInfo Transmit;
 	} wclBluetoothLeConnectionPhy;
-
+	
+	/// <summary> The Microsoft CDP Beacon device type. </summary>
+	typedef enum
+	{
+		/// <summary> Xbox One. </summary>
+		dtXboxOne = 1,
+		/// <summary> Apple iPhone. </summary>
+		dtiPhone = 6,
+		/// <summary> Apple iPad. </summary>
+		dtiPad = 7,
+		/// <summary> Android device. </summary>
+		dtAndroid = 8,
+		/// <summary> Windows 10 Desktop. </summary>
+		dtWindowsDesktop = 9,
+		/// <summary> Windows 10 Phone. </summary>
+		dtWindowsPhone = 11,
+		/// <summary> Linux device. </summary>
+		dtLinux = 12,
+		/// <summary> Windows IoT. </summary>
+		dtWindowsIoT = 13,
+		/// <summary> Surface Hub. </summary>
+		dtSurfaceHub = 14,
+		/// <summary> Windows laptop. </summary>
+		dtWindowsLaptop = 15,
+		/// <summary> Windows tablet. </summary>
+		dtWindowsTablet = 16
+	} wclBluetoothLeCdpBeaconDeviceType;
+	
+	/// <summary> The Microsoft CDP Beacon scenario type. </summary>
+	typedef enum
+	{
+		/// <summary> Bluetooth scenario. </summary>
+		stBluetooth = 1
+	} wclBluetoothLeCdpBeaconScenarioType;
+	
+	/// <summary> The Microsoft CDP Beacon extended device status. </summary>
+	typedef enum
+	{
+		/// <summary> Hosted by remote session. </summary>
+		edsRemoteSessionsHosted,
+		/// <summary> Indicates the device does not have session hosting status
+		///   available. </summary>
+		edsRemoteSessionsNotHosted,
+		/// <summary> Indicates the device supports NearShare if the user is the
+		///   same for the other device. </summary>
+		edsNearShareAuthPolicySameUser,
+		/// <summary> Indicates the device supports NearShare. </summary>
+		edsNearShareAuthPolicyPermissive
+	} wclBluetoothLeCdpBeaconExtendedDeviceStatus;
+	/// <summary> The Microsoft CDP Beacon extended device statuses
+	///   set. </summary>
+	/// <seealso cref="wclBluetoothLeCdpBeaconExtendedDeviceStatus" />
+	typedef std::set<wclBluetoothLeCdpBeaconExtendedDeviceStatus> wclBluetoothLeCdpBeaconExtendedDeviceStatuses;
+	
+	/// <summary> The Microsoft CDP Beacon salt. </summary>
+	typedef std::vector<unsigned char> wclBluetoothLeCdpBeaconSalt;
+	/// <summary> The Microsoft CDP Beacon SHA256 Hash of Salt plus Device
+	///   Thumbprint. </summary>
+	typedef std::vector<unsigned char> wclBluetoothLeCdpBeaconHash;
+	
 	/// <summary> The structure represents a Wii Remote accelerometer calibration
 	///   data. </summary>
 	typedef struct
@@ -2155,6 +2226,38 @@ namespace wclBluetooth
 		const __int64 Timestamp, const char Rssi, const unsigned short CompanyId, \
 		const unsigned short Major, const unsigned short Minor, const GUID& Uuid, \
 		const char TxRssi, const wclBluetoothLeAdvertisementFrameRawData& Data)
+	/// <summary> The <c>OnMicrosoftCdpBeaconFrame</c> event handler
+	///   prototype. </summary>
+	/// <param name="Sender"> The object initiates the event. </param>
+	/// <param name="Address"> The Bluetooth LE advertiser's MAC address. </param>
+	/// <param name="Timestamp"> The frame's timestamp in Universal Time
+	///   format. </param>
+	/// <param name="Rssi"> The measured RSSI value in dBm at range between -100
+	///   dBm and +20 dBm at 1 dBm resolution. </param>
+	/// <param name="ScenarioType"> The beacon scenario. </param>
+	/// <param name="Version"> The protocol version. </param>
+	/// <param name="DeviceType"> The device type. </param>
+	/// <param name="SubVersion"> The protocol subversion. </param>
+	/// <param name="ShareNearBy"> If <c>True</c> then the NearBy share setting is
+	///   everyone rather than only my devices. </param>
+	/// <param name="AddressAsDeviceId"> <c>True</c> indicates that the Bluetooth
+	///   address can be used as the device ID. </param>
+	/// <param name="ExtendedDeviceStatus"> The extended device status. </param>
+	/// <param name="Salt"> The beacon salt (4 random bytes). </param>
+	/// <param name="Hash"> SHA256 Hash of Salt plus Device Thumbprint. </param>
+	/// <seealso cref="wclBluetoothLeCdpBeaconScenarioType" />
+	/// <seealso cref="wclBluetoothLeCdpBeaconDeviceType" />
+	/// <seealso cref="wclBluetoothLeCdpBeaconSalt" />
+	/// <seealso cref="wclBluetoothLeCdpBeaconExtendedDeviceStatuses" />
+	/// <seealso cref="wclBluetoothLeCdpBeaconHash" />
+	#define wclBluetoothLeMicrosoftCdpBeaconFrameEvent(_event_name_) \
+		__event void _event_name_(void* Sender, const __int64 Address, \
+		const __int64 Timestamp, const char Rssi, \
+		const wclBluetoothLeCdpBeaconScenarioType ScenarioType, \
+		const unsigned char Version, const wclBluetoothLeCdpBeaconDeviceType DeviceType, \
+		const unsigned char SubVersion, const bool ShareNearBy, const bool AddressAsDeviceId, \
+		const wclBluetoothLeCdpBeaconExtendedDeviceStatuses& ExtendedDeviceStatus, \
+		const wclBluetoothLeCdpBeaconSalt& Salt, const wclBluetoothLeCdpBeaconHash& Hash)
 
 	/// <summary> The GATT server client event handlers prototype. </summary>
 	/// <param name="Sender"> The object initiates the event. </param>
@@ -3388,6 +3491,14 @@ namespace wclBluetooth
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
 		///   the WCL error codes. </returns>
 		int GetAddress(__int64& Address);
+		/// <summary> Gets the radio Bluetooth version. </summary>
+		/// <param name="Version"> If the method completed with success on output
+		///   contains the Radio's Bluetooth version. </param>
+		/// <returns> If the function succeed the return value is
+		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
+		///   the WCL error codes. </returns>
+		/// <seealso cref="wclBluetoothVersion" />
+		int GetBluetoothVersion(wclBluetoothVersion& Version);
 		/// <summary> Reads the local Bluetooth Radio Class Of Device
 		///   (COD). </summary>
 		/// <param name="Cod"> On output the local Bluetooth Radio COD. </param>
@@ -4466,9 +4577,8 @@ namespace wclBluetooth
 		///   <c>OnConnect</c> event handler. </para>
 		///   <para> NOTE: BlueSoleil does not support <c>Authentication</c>
 		///   and <c>Encryption</c> parameters per connection. </para> </remarks>
-		int Connect(const __int64 Address, const GUID& Service, const unsigned char Channel = 0,
-			const bool Authentication = true, const bool Encryption = false,
-			const unsigned long Timeout = 10000);
+		int Connect(const __int64 Address, const GUID& Service, const unsigned char Channel,
+			const bool Authentication, const bool Encryption, const unsigned long Timeout);
 
 		/// <summary> Gets a remote device MAC address. </summary>
 		/// <returns> The remote device MAC address. </returns>
@@ -4659,9 +4769,9 @@ namespace wclBluetooth
 		/// <remarks> NOTE: BlueSoleil has limited support for <c>Authentication</c>
 		///   and <c>Encryption.</c>. Also it doe snot support user-defined RFCOMM
 		///   channel number. </remarks>
-		int Listen(const GUID& Service, const tstring& ServiceName = _T(""),
-			const unsigned char Channel = 0, const bool Authentication = true,
-			const bool Encryption = false);
+		int Listen(const GUID& Service, const tstring& ServiceName,
+			const unsigned char Channel, const bool Authentication,
+			const bool Encryption);
 		
 		/// <summary> Gets the authentication value. </summary>
 		/// <returns> <c>True</c> if the connection required authentication.
@@ -6927,8 +7037,17 @@ namespace wclBluetooth
 		void ParseEddystoneBeacons(const __int64 Address, const __int64 Timestamp,
 			const char Rssi, const unsigned short Uuid,
 			const wclBluetoothLeAdvertisementFrameRawData& Data);
-		void ParseManufacturerRawFrame(const __int64 Address, const __int64 Timestamp,
+		bool TryParseiBeacon(const __int64 Address, const __int64 Timestamp,
 			const char Rssi, const unsigned short CompanyId,
+			const wclBluetoothLeAdvertisementFrameRawData& Data);
+		bool TryParseAltBeacon(__int64 Address, const __int64 Timestamp,
+			const char Rssi, const unsigned short CompanyId,
+			const wclBluetoothLeAdvertisementFrameRawData& Data);
+		bool TryParseMsCdpBeacon(const __int64 Address, const __int64 Timestamp,
+			const char Rssi, const unsigned short CompanyId,
+			const wclBluetoothLeAdvertisementFrameRawData& Data);
+		void ParseManufacturerRawFrame(const __int64 Address,
+			const __int64 Timestamp, const char Rssi, const unsigned short CompanyId,
 			const wclBluetoothLeAdvertisementFrameRawData& Data);
 
 	protected:
@@ -7200,6 +7319,36 @@ namespace wclBluetooth
 		virtual void DoManufacturerRawFrame(const __int64 Address, const __int64 Timestamp,
 			const char Rssi, const unsigned short CompanyId,
 			const wclBluetoothLeAdvertisementFrameRawData& Data);
+		/// <summary> Fires the <c>OnMicrosoftCdpBeaconFrame</c> event. </summary>
+		/// <param name="Address"> The Bluetooth LE advertiser's MAC
+		///   address. </param>
+		/// <param name="Timestamp"> The frame's timestamp in Universal Time
+		///   format. </param>
+		/// <param name="Rssi"> The measured RSSI value in dBm at range between -100
+		///   dBm and +20 dBm at 1 dBm resolution. </param>
+		/// <param name="ScenarioType"> The beacon scenario. </param>
+		/// <param name="Version"> The protocol version. </param>
+		/// <param name="DeviceType"> The device type. </param>
+		/// <param name="SubVersion"> The protocol subversion. </param>
+		/// <param name="ShareNearBy"> If <c>True</c> then the NearBy share setting
+		///   is everyone rather than only my devices. </param>
+		/// <param name="AddressAsDeviceId"> <c>True</c> indicates that the
+		///   Bluetooth address can be used as the device ID. </param>
+		/// <param name="ExtendedDeviceStatus"> The extended device status. </param>
+		/// <param name="Salt"> The beacon salt (4 random bytes). </param>
+		/// <param name="Hash"> SHA256 Hash of Salt plus Device Thumbprint. </param>
+		/// <seealso cref="wclBluetoothLeCdpBeaconScenarioType" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconDeviceType" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconSalt" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconExtendedDeviceStatuses" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconHash" />
+		virtual void DoMicrosoftCdpBeaconFrame(const __int64 Address, const __int64 Timestamp,
+			const char Rssi, const wclBluetoothLeCdpBeaconScenarioType ScenarioType,
+			const unsigned char Version, const wclBluetoothLeCdpBeaconDeviceType DeviceType,
+			const unsigned char SubVersion, const bool ShareNearBy,
+			const bool AddressAsDeviceId,
+			const wclBluetoothLeCdpBeaconExtendedDeviceStatuses& ExtendedDeviceStatus,
+			const wclBluetoothLeCdpBeaconSalt& Salt, const wclBluetoothLeCdpBeaconHash& Hash);
 		/// <summary> Fires the <c>OnProximityBeaconFrame</c> event. </summary>
 		/// <param name="Address"> The Bluetooth LE advertiser's MAC
 		///   address. </param>
@@ -7262,19 +7411,6 @@ namespace wclBluetooth
 		virtual ~CwclBluetoothLeBeaconWatcherConnection();
 
 		/// <summary> Starts monitoring for Bluetooth LE Beacons. </summary>
-		/// <param name="ScanningMode"> Specifies the Bluetooth LE scanning
-		///   mode. </param>
-		/// <param name="ScanInterval"> Specifies the Bluetooth LE scan in 0.625 ms
-		///   units. The value must be in range between
-		///   <see cref="WCL_BLE_MIN_SCAN_INTERVAL" /> and
-		///   <see cref="WCL_BLE_MAX_SCAN_INTERVAL" />. The default value is
-		///   <see cref="WCL_BLE_DEFAULT_SCAN_INTERVAL" />. </param>
-		/// <param name="ScanWindow"> Specifies the Bluetooth LE scan window in
-		///   0.625 ms units. The value must be in range between
-		///   <see cref="WCL_BLE_MIN_SCAN_WINDOW" /> and
-		///   <see cref="WCL_BLE_MAX_SCAN_WINDOW" />. The default value is
-		///   <see cref="WCL_BLE_DEFAULT_SCAN_WINDOW" />. The scan window must be
-		///   less or equal to <c>ScanInterval</c>. </param>
 		/// <param name="AllowExtendedAdvertisements"> Set this parameter to
 		///   <c>true</c> to enable receiving advertisements of the Extended
 		///   Advertising format can be received. If this parameter set to
@@ -7282,19 +7418,22 @@ namespace wclBluetooth
 		///   Advertisements the
 		///   <see cref="WCL_E_BLUETOOTH_LE_EXT_ADV_NOT_SUPPORTED" /> error will
 		///   be returned. </param>
+		/// <param name="ScanInterval"> Specifies the Bluetooth LE scan in 0.625 ms
+		///   units. The value must be in range between 4 and 16384. </param>
+		/// <param name="ScanningMode"> Specifies the Bluetooth LE scanning
+		///   mode. </param>
+		/// <param name="ScanWindow"> Specifies the Bluetooth LE scan window in
+		///   0.625 ms units. The value must be in range between 4 and 16384. The
+		///   scan window must be less or equal to <c>ScanInterval</c>. </param>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
 		///   the WCL error codes. </returns>
-		/// <remarks> This feature is supported on Windows 10 with the Microsoft
-		///   Bluetooth drivers only. If the method returns error try to call this
-		///   method with default scan parameters. </remarks>
+		/// <remarks> This feature is supported on Windows 10 with the
+		///   Microsoft Bluetooth drivers only. If the method returns error try to
+		///   call this method with default scan parameters. </remarks>
 		/// <seealso cref="wclBluetoothLeScanningMode" />
-		/// <seealso cref="WCL_BLE_MIN_SCAN_WINDOW" />
-		/// <seealso cref="WCL_BLE_MAX_SCAN_WINDOW" />
-		/// <seealso cref="WCL_BLE_DEFAULT_SCAN_WINDOW" />
-		int Start(const wclBluetoothLeScanningMode ScanningMode,
-			const unsigned short ScanInterval, const unsigned short ScanWindow,
-			const bool AllowExtendedAdvertisements);
+		int Start(const bool AllowExtendedAdvertisements, const unsigned short ScanInterval,
+			const wclBluetoothLeScanningMode ScanningMode, const unsigned short ScanWindow);
 		/// <summary> Stops monitoring for Bluetooth LE Beacons. </summary>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
@@ -7331,12 +7470,10 @@ namespace wclBluetooth
 		__declspec(property(get = GetRadio)) CwclBluetoothRadio* Radio;
 
 		/// <summary> Gets the current scan interval value. </summary>
-		/// <returns> The current scan interval. If the watcher is stopped the
-		///   returning value is always <see cref="WCL_BLE_DEFAULT_SCAN_INTERVAL" /> </returns>
+		/// <returns> The current scan interval. </returns>
 		unsigned short GetScanInterval() const;
 		/// <summary> Gets the current scan interval value. </summary>
-		/// <value> The current scan interval. If the watcher is stopped the
-		///   returning value is always <see cref="WCL_BLE_DEFAULT_SCAN_INTERVAL" /> </value>
+		/// <value> The current scan interval. </value>
 		__declspec(property(get = GetScanInterval)) unsigned short ScanInterval;
 
 		/// <summary> Gets the current scanning mode. </summary>
@@ -7349,14 +7486,10 @@ namespace wclBluetooth
 		__declspec(property(get = GetScanningMode)) wclBluetoothLeScanningMode ScanningMode;
 
 		/// <summary> Gets the current scan window value. </summary>
-		/// <returns> The current scan window. If the watcher is stopped the
-		///   returning value is always
-		///   <see cref="WCL_BLE_DEFAULT_SCAN_WINDOW" /> </returns>
+		/// <returns> The current scan window. </returns>
 		unsigned short GetScanWindow() const;
 		/// <summary> Gets the current scan window value. </summary>
-		/// <value> The current scan window. If the watcher is stopped the
-		///   returning value is always
-		///   <see cref="WCL_BLE_DEFAULT_SCAN_WINDOW" /> </value>
+		/// <value> The current scan window. </value>
 		__declspec(property(get = GetScanWindow)) unsigned short ScanWindow;
 
 		/// <summary> The event fires when an appearance advertisement frame
@@ -7607,6 +7740,30 @@ namespace wclBluetooth
 		///   there is no any data available in the frame. </param>
 		/// <seealso cref="wclBluetoothLeAdvertisementFrameRawData" />
 		wclBluetoothLeManufacturerRawFrameEvent(OnManufacturerRawFrame);
+		/// <summary> The event fires when Microsoft CDP Beacon frame received. </summary>
+		/// <param name="Sender"> The object initiates the event. </param>
+		/// <param name="Address"> The Bluetooth LE advertiser's MAC address. </param>
+		/// <param name="Timestamp"> The frame's timestamp in Universal Time
+		///   format. </param>
+		/// <param name="Rssi"> The measured RSSI value in dBm at range between -100
+		///   dBm and +20 dBm at 1 dBm resolution. </param>
+		/// <param name="ScenarioType"> The beacon scenario. </param>
+		/// <param name="Version"> The protocol version. </param>
+		/// <param name="DeviceType"> The device type. </param>
+		/// <param name="SubVersion"> The protocol subversion. </param>
+		/// <param name="ShareNearBy"> If <c>True</c> then the NearBy share setting is
+		///   everyone rather than only my devices. </param>
+		/// <param name="AddressAsDeviceId"> <c>True</c> indicates that the Bluetooth
+		///   address can be used as the device ID. </param>
+		/// <param name="ExtendedDeviceStatus"> The extended device status. </param>
+		/// <param name="Salt"> The beacon salt (4 random bytes). </param>
+		/// <param name="Hash"> SHA256 Hash of Salt plus Device Thumbprint. </param>
+		/// <seealso cref="wclBluetoothLeCdpBeaconScenarioType" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconDeviceType" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconSalt" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconExtendedDeviceStatuses" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconHash" />
+		wclBluetoothLeMicrosoftCdpBeaconFrameEvent(OnMicrosoftCdpBeaconFrame);
 		/// <summary> The <c>OnProximityBeaconFrame</c> event handler
 		///   prototype. </summary>
 		/// <param name="Sender"> The object initiates the event. </param>
@@ -8466,20 +8623,26 @@ namespace wclBluetooth
 		/// <param name="Advertisements"> The Bluetooth LE Advertisements
 		///   list. </param>
 		/// <param name="Interval"> An advertising interval in 0.625 ms
-		///   units. The value must be in range between
-		///   <see cref="WCL_BLE_MIN_ADVERTISING_INTERVAL" /> and
-		///   <see cref="WCL_BLE_MAX_ADVERTISING_INTERVAL" />. The default value is
-		///   <see cref="WCL_BLE_DEFAULT_ADVERTISING_INTERVAL" />. </param>
+		///   units. The value must be in range between 32 and 16384. </param>
+		/// <param name="UseExtendedAdvertisement"> Specifies that the advertisement
+		///   publisher should use the Extended Advertising format. </param>
+		/// <param name="Anonymous"> Specifies whether or not the device address is
+		///   included in the advertisement header. </param>
+		/// <param name="IncludeTxRssi"> Specifies whether the transmit power level
+		///   is included in the advertisement header. </param>
+		/// <param name="PreferredTxRssi"> If specified, requests that the radio use
+		///   the indicated transmit power level for the advertisement. The
+		///   requested power level in dDm at range between -100 dBm and +20 for the
+		///   radio transmission. </param>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
 		///   the WCL error codes. </returns>
 		/// <remarks> This feature is supported on Windows 10 with the Microsoft
 		///   Bluetooth drivers only. </remarks>
 		/// <seealso cref="WCL_BLE_ADV_LIST" />
-		/// <seealso cref="WCL_BLE_MIN_ADVERTISING_INTERVAL" />
-		/// <seealso cref="WCL_BLE_MAX_ADVERTISING_INTERVAL" />
-		/// <seealso cref="WCL_BLE_DEFAULT_ADVERTISING_INTERVAL" />
-		int Start(WCL_BLE_ADV_LIST* const Advertisements, const unsigned short Interval);
+		int Start(WCL_BLE_ADV_LIST* const Advertisements, const unsigned short Interval,
+			const bool UseExtendedAdvertisement, const bool Anonymous,
+			const bool IncludeTxRssi, const char PreferredTxRssi);
 		/// <summary> Stops Bluetooth LE Advertising. </summary>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
@@ -8504,13 +8667,6 @@ namespace wclBluetooth
 		/// <value> <c>True</c> if advertising is running. </value>
 		__declspec(property(get = GetAdvertising)) bool Advertising;
 
-		/// <summary> Gets the advertising interval. </summary>
-		/// <returns> The advertising interval in 0.625ms units. </returns>
-		unsigned short GetInterval() const;
-		/// <summary> Gets the advertising interval. </summary>
-		/// <value> The advertising interval in 0.625ms units. </value>
-		__declspec(property(get = GetInterval)) unsigned short Interval;
-
 		/// <summary> Gets the connection owner. </summary>
 		/// <returns> The <see cref="CwclBluetoothRadio" /> object owns the
 		///   connection. </returns>
@@ -8518,72 +8674,31 @@ namespace wclBluetooth
 		CwclBluetoothRadio* GetRadio() const;
 		__declspec(property(get = GetRadio)) CwclBluetoothRadio* Radio;
 
-		/// <summary> Specifies whether or not the device address is included in the
-		///   advertisement header. By default, the address is included. </summary>
-		/// <returns> The value indicates whether the device address is hidden. </returns>
+		/// <summary> Gets the advertising interval. </summary>
+		/// <returns> The advertising interval in 0.625ms units. </returns>
+		unsigned short GetInterval() const;
+		/// <summary> Gets the advertising interval. </summary>
+		/// <value> The advertising interval in 0.625ms units. </value>
+		__declspec(property(get = GetInterval)) unsigned short Interval;
+
+		/// <summary> Gets if the device address is included in the advertisement
+		///   header. </summary>
+		/// <returns> Indicates whether the device address is hidden. </returns>
 		bool GetAnonymous() const;
-		/// <summary> Specifies whether or not the device address is included in the
-		///   advertisement header. By default, the address is included. </summary>
-		/// <param name="value"> Indicates whether the device address is hidden. The default
-		///   value is <c>False</c>, indicating that the address is
-		///   included. </param>
-		/// <remarks> <para> The Extended Advertising format must be enabled by
-		///   setting the <c>UseExtendedAdvertisement</c> to <c>True</c> to use this
-		///   property. If the <c>UseExtendedAdvertisement</c> is <c>False</c> the
-		///   value of this property is ignored. </para>
-		///   <para> If the advertiser is running and an application changes the
-		///   property the <see cref="wclEBluetoothLeBeacon" /> exception
-		///   raises. </para> </remarks>
-		/// <exception cref="wclEBluetoothLeBeacon"></exception>
-		void SetAnonymous(const bool value);
-		/// <summary> Specifies whether or not the device address is included in the
-		///   advertisement header. By default, the address is included. </summary>
-		/// <value> Indicates whether the device address is hidden. The default
-		///   value is <c>False</c>, indicating that the address is
-		///   included. </value>
-		/// <remarks> <para> The Extended Advertising format must be enabled by
-		///   setting the <c>UseExtendedAdvertisement</c> to <c>True</c> to use this
-		///   property. If the <c>UseExtendedAdvertisement</c> is <c>False</c> the
-		///   value of this property is ignored. </para>
-		///   <para> If the advertiser is running and an application changes the
-		///   property the <see cref="wclEBluetoothLeBeacon" /> exception
-		///   raises. </para> </remarks>
-		/// <exception cref="wclEBluetoothLeBeacon"></exception>
-		__declspec(property(get = GetAnonymous, put = SetAnonymous)) bool Anonymous;
-
-		/// <summary> Specifies whether the transmit power level is included in
-		///   the advertisement header. </summary>
-		/// <returns> The value indicates whether the transmit power level is
-		///   included. </returns>
+		/// <summary> Gets if the device address is included in the advertisement
+		///   header. </summary>
+		/// <value> Indicates whether the device address is hidden. </value>
+		__declspec(property(get = GetAnonymous)) bool Anonymous;
+		
+		/// <summary> Gets if the transmit power level is included in the
+		///   advertisement header. </summary>
+		/// <returns> Indicates whether the transmit power level is included. </returns>
 		bool GetIncludeTxRssi() const;
-		/// <summary> Specifies whether the transmit power level is included in
-		///   the advertisement header. </summary>
-		/// <param name="value"> Indicates whether the transmit power level is included.
-		///   The default value is <c>False</c>. </param>
-		/// <remarks> <para> The Extended Advertising format must be enabled by
-		///   setting the <c>UseExtendedAdvertisement</c> to <c>True</c> to use this
-		///   property. If the <c>UseExtendedAdvertisement</c> is <c>False</c> the
-		///   value of this property is ignored. </para>
-		///   <para> If the advertiser is running and an application changes the
-		///   property the <see cref="wclEBluetoothLeBeacon" /> exception
-		///   raises. </para> </remarks>
-		/// <exception cref="wclEBluetoothLeBeacon"></exception>
-		void SetIncludeTxRssi(const bool value);
-		/// <summary> Specifies whether the transmit power level is included in
-		///   the advertisement header. </summary>
-		/// <value> Indicates whether the transmit power level is included. The
-		///   default value is <c>False</c>. </value>
-		/// <remarks> <para> The Extended Advertising format must be enabled by
-		///   setting the <c>UseExtendedAdvertisement</c> to <c>True</c> to use this
-		///   property. If the <c>UseExtendedAdvertisement</c> is <c>False</c> the
-		///   value of this property is ignored. </para>
-		///   <para> If the advertiser is running and an application changes the
-		///   property the <see cref="wclEBluetoothLeBeacon" /> exception
-		///   raises. </para> </remarks>
-		/// <exception cref="wclEBluetoothLeBeacon"></exception>
-		__declspec(property(get = GetIncludeTxRssi, put = SetIncludeTxRssi))
-			bool IncludeTxRssi;
-
+		/// <summary> Gets if the transmit power level is included in the
+		///   advertisement header. </summary>
+		/// <value> Indicates whether the transmit power level is included. </value>
+		__declspec(property(get = GetIncludeTxRssi)) bool IncludeTxRssi;
+		
 		/// <summary> If specified, requests that the radio use the indicated
 		///   transmit power level for the advertisement. </summary>
 		/// <returns> The requested power level in dDm at range between -100
@@ -8591,62 +8706,20 @@ namespace wclBluetooth
 		char GetPreferredTxRssi() const;
 		/// <summary> If specified, requests that the radio use the indicated
 		///   transmit power level for the advertisement. </summary>
-		/// <param name="value"> The requested power level in dDm at range between -100
-		///   dBm and +20 for the radio transmission. The default is -127 indicating
-		///   that this feature is disabled. If the parameter is out of range the
-		///   <see cref="wclEInvalidArgument" /> exception raises. </param>
-		/// <remarks> <para> Enabling the Extended Advertising format is necessary
-		///   to enable several other related properties. </para>
-		///  <para> If the advertiser is running and an application changes the
-		///   property the <see cref="wclEBluetoothLeBeacon" /> exception
-		///   raises. </para> </remarks>
-		/// <exception cref="wclEInvalidArgument"></exception>
-		/// <exception cref="wclEBluetoothLeBeacon"></exception>
-		void SetPreferredTxRssi(const char value);
-		/// <summary> If specified, requests that the radio use the indicated
-		///   transmit power level for the advertisement. </summary>
 		/// <value> The requested power level in dDm at range between -100
-		///   dBm and +20 for the radio transmission. The default is -127 indicating
-		///   that this feature is disabled. If the parameter is out of range the
-		///   <see cref="wclEInvalidArgument" /> exception raises. </value>
-		/// <remarks> <para> Enabling the Extended Advertising format is necessary
-		///   to enable several other related properties. </para>
-		///  <para> If the advertiser is running and an application changes the
-		///   property the <see cref="wclEBluetoothLeBeacon" /> exception
-		///   raises. </para> </remarks>
-		/// <exception cref="wclEInvalidArgument"></exception>
-		/// <exception cref="wclEBluetoothLeBeacon"></exception>
-		__declspec(property(get = GetPreferredTxRssi, put = SetPreferredTxRssi))
-			char PreferredTxRssi;
-
+		///   dBm and +20 for the radio transmission. </value>
+		__declspec(property(get = GetPreferredTxRssi)) char PreferredTxRssi;
+		
 		/// <summary> Specifies that the advertisement publisher should use the
 		///   Extended Advertising format. </summary>
-		/// <returns> The value indicates whether or not the Extended Advertising format
-		///   should be used. </returns>
+		/// <returns> Indicates whether or not the Extended Advertising format should
+		///   be used. </returns>
 		bool GetUseExtendedAdvertisement() const;
 		/// <summary> Specifies that the advertisement publisher should use the
 		///   Extended Advertising format. </summary>
-		/// <param name="value"> Indicates whether or not the Extended Advertising format
-		///   should be used. The default value is <c>False</c>. </param>
-		/// <remarks> <para> Enabling the Extended Advertising format is necessary
-		///   to enable several other related properties. </para>
-		///  <para> If the advertiser is running and an application changes the
-		///   property the <see cref="wclEBluetoothLeBeacon" /> exception
-		///   raises. </para> </remarks>
-		/// <exception cref="wclEBluetoothLeBeacon"></exception>
-		void SetUseExtendedAdvertisement(const bool value);
-		/// <summary> Specifies that the advertisement publisher should use the
-		///   Extended Advertising format. </summary>
 		/// <value> Indicates whether or not the Extended Advertising format should
-		///   be used. The default value is <c>False</c>. </value>
-		/// <remarks> <para> Enabling the Extended Advertising format is necessary
-		///   to enable several other related properties. </para>
-		///  <para> If the advertiser is running and an application changes the
-		///   property the <see cref="wclEBluetoothLeBeacon" /> exception
-		///   raises. </para> </remarks>
-		/// <exception cref="wclEBluetoothLeBeacon"></exception>
-		__declspec(property(get = GetUseExtendedAdvertisement, put = SetUseExtendedAdvertisement))
-			bool UseExtendedAdvertisement;
+		///   be used. </value>
+		__declspec(property(get = GetUseExtendedAdvertisement)) bool UseExtendedAdvertisement;
 
 		/// <summary> The event fires when the Bluetooth LE advertising
 		///   started. </summary>
@@ -8930,8 +9003,7 @@ namespace wclBluetooth
 		
 		/// <summary> Connects to a remote device. </summary>
 		/// <param name="Address"> The remote Bluetooth device address. </param>
-		/// <param name="Timeout"> The connect timeout in milliseconds. The
-		///   default value is 10000 milliseconds. </param>
+		/// <param name="Timeout"> The connect timeout in milliseconds. </param>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
 		///   the WCL error codes. </returns>
@@ -8942,7 +9014,7 @@ namespace wclBluetooth
 		///   <c>OnConnect</c> event handler. </para>
 		///   <para> NOTE: BlueSoleil does not support <c>Authentication</c>
 		///   and <c>Encryption</c> parameters per connection. </para> </remarks>
-		int Connect(const __int64 Address, const unsigned long Timeout = 10000);
+		int Connect(const __int64 Address, const unsigned long Timeout);
 		
 		/// <summary> Requests the Wii Remote status. </summary>
 		/// <returns> If the function succeed the return value is
@@ -10974,6 +11046,10 @@ namespace wclBluetooth
 
 	private:
 		bool									FActive;
+		bool									FAllowExtendedAdvertisements;
+		unsigned short							FScanInterval;
+		wclBluetoothLeScanningMode				FScanningMode;
+		unsigned short							FScanWindow;
 		CwclBluetoothLeBeaconWatcherConnection*	FWatcher;
 		
 		void WatcherAdvertisementAppearanceFrame(void* Sender, const __int64 Address,
@@ -11025,6 +11101,13 @@ namespace wclBluetooth
 		void WatcherManufacturerRawFrame(void* Sender, const __int64 Address,
 			const __int64 Timestamp, const char Rssi, const unsigned short CompanyId,
 			const wclBluetoothLeAdvertisementFrameRawData& Data);
+		void WatcherMicrosoftCdpBeaconFrame(void* Sender, const __int64 Address,
+			const __int64 Timestamp, const char Rssi,
+			const wclBluetoothLeCdpBeaconScenarioType ScenarioType, const unsigned char Version,
+			const wclBluetoothLeCdpBeaconDeviceType DeviceType, const unsigned char SubVersion,
+			const bool ShareNearBy, const bool AddressAsDeviceId,
+			const wclBluetoothLeCdpBeaconExtendedDeviceStatuses& ExtendedDeviceStatus,
+			const wclBluetoothLeCdpBeaconSalt& Salt, const wclBluetoothLeCdpBeaconHash& Hash);
 		void WatcherProximityBeaconFrame(void* Sender, const __int64 Address, const __int64 Timestamp,
 			const char Rssi, const unsigned short CompanyId, const unsigned short Major,
 			const unsigned short Minor, const GUID& Uuid, const char TxRssi,
@@ -11292,6 +11375,35 @@ namespace wclBluetooth
 		virtual void DoManufacturerRawFrame(const __int64 Address, const __int64 Timestamp,
 			const char Rssi, const unsigned short CompanyId,
 			const wclBluetoothLeAdvertisementFrameRawData& Data);
+		/// <summary> Fires the <c>OnMicrosoftCdpBeaconFrame</c> event. </summary>
+		/// <param name="Address"> The Bluetooth LE advertiser's MAC
+		///   address. </param>
+		/// <param name="Timestamp"> The frame's timestamp in Universal Time
+		///   format. </param>
+		/// <param name="Rssi"> The measured RSSI value in dBm at range between -100
+		///   dBm and +20 dBm at 1 dBm resolution. </param>
+		/// <param name="ScenarioType"> The beacon scenario. </param>
+		/// <param name="Version"> The protocol version. </param>
+		/// <param name="DeviceType"> The device type. </param>
+		/// <param name="SubVersion"> The protocol subversion. </param>
+		/// <param name="ShareNearBy"> If <c>True</c> then the NearBy share setting
+		///   is everyone rather than only my devices. </param>
+		/// <param name="AddressAsDeviceId"> <c>True</c> indicates that the
+		///   Bluetooth address can be used as the device ID. </param>
+		/// <param name="ExtendedDeviceStatus"> The extended device status. </param>
+		/// <param name="Salt"> The beacon salt (4 random bytes). </param>
+		/// <param name="Hash"> SHA256 Hash of Salt plus Device Thumbprint. </param>
+		/// <seealso cref="wclBluetoothLeCdpBeaconScenarioType" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconDeviceType" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconSalt" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconExtendedDeviceStatuses" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconHash" />
+		virtual void DoMicrosoftCdpBeaconFrame(__int64 Address, __int64 Timestamp,
+			const char Rssi, const wclBluetoothLeCdpBeaconScenarioType ScenarioType,
+			const unsigned char Version, const wclBluetoothLeCdpBeaconDeviceType DeviceType,
+			const unsigned char SubVersion, const bool ShareNearBy, const bool AddressAsDeviceId,
+			const wclBluetoothLeCdpBeaconExtendedDeviceStatuses& ExtendedDeviceStatus,
+			const wclBluetoothLeCdpBeaconSalt& Salt, const wclBluetoothLeCdpBeaconHash& Hash);
 		/// <summary> Fires the <c>OnProximityBeaconFrame</c> event. </summary>
 		/// <param name="Address"> The Bluetooth LE advertiser's MAC
 		///   address. </param>
@@ -11330,42 +11442,14 @@ namespace wclBluetooth
 		/// <summary> Starts monitoring for Bluetooth LE Beacons. </summary>
 		/// <param name="Radio"> The <see cref="CwclBluetoothRadio" /> object used
 		///   to communicate with a remote Bluetooth device. </param>
-		/// <param name="ScanningMode"> Specifies the Bluetooth LE scanning
-		///   mode. </param>
-		/// <param name="ScanInterval"> Specifies the Bluetooth LE scan in 0.625 ms
-		///   units. The value must be in range between
-		///   <see cref="WCL_BLE_MIN_SCAN_INTERVAL" /> and
-		///   <see cref="WCL_BLE_MAX_SCAN_INTERVAL" />. The default value is
-		///   <see cref="WCL_BLE_DEFAULT_SCAN_INTERVAL" />. </param>
-		/// <param name="ScanWindow"> Specifies the Bluetooth LE scan window in
-		///   0.625 ms units. The value must be in range between
-		///   <see cref="WCL_BLE_MIN_SCAN_WINDOW" /> and
-		///   <see cref="WCL_BLE_MAX_SCAN_WINDOW" />. The default value is
-		///   <see cref="WCL_BLE_DEFAULT_SCAN_WINDOW" />. The scan window must be
-		///   less or equal to <c>ScanInterval</c>. </param>
-		/// <param name="AllowExtendedAdvertisements"> Set this parameter to
-		///   <c>true</c> to enable receiving advertisements of the Extended
-		///   Advertising format can be received. If this parameter set to
-		///   <c>true</c> and a hardware or OS does not support Extended
-		///   Advertisements the
-		///   <see cref="WCL_E_BLUETOOTH_LE_EXT_ADV_NOT_SUPPORTED" /> error will
-		///   be returned. </param>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
 		///   the WCL error codes. </returns>
-		/// <remarks> This feature is supported on Windows 10 with the Microsoft
-		///   Bluetooth drivers only. If the method returns error try to call this
-		///   method with default scan parameters. </remarks>
-		/// <seealso cref="CwclBluetoothRadio" />
-		/// <seealso cref="wclBluetoothLeScanningMode" />
-		/// <seealso cref="WCL_BLE_MIN_SCAN_WINDOW" />
-		/// <seealso cref="WCL_BLE_MAX_SCAN_WINDOW" />
-		/// <seealso cref="WCL_BLE_DEFAULT_SCAN_WINDOW" />
-		int Start(CwclBluetoothRadio* const Radio,
-			const wclBluetoothLeScanningMode ScanningMode = smActive,
-			const unsigned short ScanInterval = WCL_BLE_DEFAULT_SCAN_INTERVAL,
-			const unsigned short ScanWindow = WCL_BLE_DEFAULT_SCAN_WINDOW,
-			const bool AllowExtendedAdvertisements = false);
+		/// <remarks> This feature is supported on Windows 10 with the
+		///   Microsoft Bluetooth drivers only. If the method returns error try to
+		///   call this method with default scan parameters. </remarks>
+		/// <seealso cref="TwclBluetoothRadio" />
+		int Start(CwclBluetoothRadio* const Radio);
 		/// <summary> Stops monitoring for Bluetooth LE Beacons. </summary>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
@@ -11374,14 +11458,29 @@ namespace wclBluetooth
 		///   Bluetooth drivers only. </remarks>
 		int Stop();
 
+		/// <summary> Restores the default scan parameters. </summary>
+		/// <returns> If the function succeed the return value is
+		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
+		///   the WCL error codes. </returns>
+		int RestoreDefaults();
+
 		/// <summary> Gets the Extended Advertisement receiving flag. </summary>
-		/// <returns> <c>true</c> if the receiving the Extended Advertisement is
-		///   enabled. <c>false</c> otherwise. </value>
+		/// <returns> <c>True</c> if the Extended Advertising format enabled. </returns>
 		bool GetAllowExtendedAdvertisements() const;
-		/// <summary> Gets the Extended Advertisement receiving flag. </summary>
-		/// <value> <c>true</c> if the receiving the Extended Advertisement is
-		///   enabled. <c>galse</c> otherwise. </value>
-		__declspec(property(get = GetAllowExtendedAdvertisements)) bool AllowExtendedAdvertisements;
+		/// <summary> Sets the Extended Advertisement receiving flag. </summary>
+		/// <param name="Value"> Set this parameter to <c>True</c> to enable receiving
+		///   advertisements of the Extended Advertising format can be
+		///   received. </param>
+		/// <exception cref="wclEBluetoothLeBeacon"></exception>
+		void SetAllowExtendedAdvertisements(const bool Value);
+		/// <summary> Gets and sets the Extended Advertisement receiving
+		///   flag. </summary>
+		/// <value> Set this parameter to <c>True</c> to enable receiving
+		///   advertisements of the Extended Advertising format can be
+		///   received. </value>
+		/// <exception cref="wclEBluetoothLeBeacon"></exception>
+		__declspec(property(get = GetAllowExtendedAdvertisements, put = SetAllowExtendedAdvertisements))
+			bool AllowExtendedAdvertisements;
 
 		/// <summary> Gets Beacon Monitoring state. </summary>
 		/// <returns> <c>True</c> if the Beacon monitoring is running. </returns>
@@ -11402,35 +11501,56 @@ namespace wclBluetooth
 		__declspec(property(get = GetRadio)) CwclBluetoothRadio* Radio;
 
 		/// <summary> Gets the current scan interval value. </summary>
-		/// <returns> The current scan interval. If the watcher is stopped the
-		///   returning value is always
-		///   <see cref="WCL_BLE_DEFAULT_SCAN_INTERVAL" /> </returns>
+		/// <returns> The Bluetooth LE scan interval in 0.625 ms units </returns>
 		unsigned short GetScanInterval() const;
-		/// <summary> Gets the current scan interval value. </summary>
-		/// <value> The current scan interval. If the watcher is stopped the
-		///   returning value is always
-		///   <see cref="WCL_BLE_DEFAULT_SCAN_INTERVAL" /> </value>
-		__declspec(property(get = GetScanInterval)) unsigned short ScanInterval;
+		/// <summary> Sets scan interval value. </summary>
+		/// <param name="Value"> Specifies the Bluetooth LE scan in 0.625 ms units. The value
+		///   must be in range between 4 and 16384. </param>
+		/// <exception cref="wclEInvalidArgument"></exception>
+		/// <exception cref="wclEBluetoothLeBeacon"></exception>
+		void SetScanInterval(unsigned short Value);
+		/// <summary> Gets and sets the current scan interval value. </summary>
+		/// <value> Specifies the Bluetooth LE scan in 0.625 ms units. The value
+		///   must be in range between 4 and 16384. </value>
+		/// <exception cref="wclEInvalidArgument"></exception>
+		/// <exception cref="wclEBluetoothLeBeacon"></exception>
+		__declspec(property(get = GetScanInterval, put = SetScanInterval))
+			unsigned short ScanInterval;
 
 		/// <summary> Gets the current scanning mode. </summary>
 		/// <returns> The Bluetooth LE scanning mode. </returns>
 		/// <seealso cref="wclBluetoothLeScanningMode" />
 		wclBluetoothLeScanningMode GetScanningMode() const;
-		/// <summary> Gets the current scanning mode. </summary>
+		/// <summary> Sets the current scanning mode. </summary>
+		/// <param name="Value"> The Bluetooth LE scanning mode. </param>
+		/// <seealso cref="wclBluetoothLeScanningMode" />
+		/// <exception cref="wclEBluetoothLeBeacon"></exception>
+		void SetScanningMode(const wclBluetoothLeScanningMode Value);
+		/// <summary> Gets and sets the current scanning mode. </summary>
 		/// <value> The Bluetooth LE scanning mode. </value>
 		/// <seealso cref="wclBluetoothLeScanningMode" />
-		__declspec(property(get = GetScanningMode)) wclBluetoothLeScanningMode ScanningMode;
+		/// <exception cref="wclEBluetoothLeBeacon"></exception>
+		__declspec(property(get = GetScanningMode, put = SetScanningMode))
+			wclBluetoothLeScanningMode ScanningMode;
 
 		/// <summary> Gets the current scan window value. </summary>
-		/// <returns> The current scan window. If the watcher is stopped the
-		///   returning value is always
-		///   <see cref="WCL_BLE_DEFAULT_SCAN_WINDOW" /> </returns>
+		/// <returns> The scan window in 0.625 ms units. </returns>
 		unsigned short GetScanWindow() const;
-		/// <summary> Gets the current scan window value. </summary>
-		/// <value> The current scan window. If the watcher is stopped the
-		///   returning value is always
-		///   <see cref="WCL_BLE_DEFAULT_SCAN_WINDOW" /> </value>
-		__declspec(property(get = GetScanWindow)) unsigned short ScanWindow;
+		/// <summary> Sets the current scan window value. </summary>
+		/// <param name="Value"> Specifies the Bluetooth LE scan window in 0.625 ms units.
+		///   The value must be in range between 4 and 16384. The scan window must
+		///   be less or equal to <c>ScanInterval</c>. </param>
+		/// <exception cref="wclEInvalidArgument"></exception>
+		/// <exception cref="wclEBluetoothLeBeacon"></exception>
+		void SetScanWindow(const unsigned short Value);
+		/// <summary> Gets and sets the current scan window value. </summary>
+		/// <value> Specifies the Bluetooth LE scan window in 0.625 ms units.
+		///   The value must be in range between 4 and 16384. The scan window must
+		///   be less or equal to <c>ScanInterval</c>. </value>
+		/// <exception cref="wclEInvalidArgument"></exception>
+		/// <exception cref="wclEBluetoothLeBeacon"></exception>
+		__declspec(property(get = GetScanWindow, put = SetScanWindow))
+			unsigned short ScanWindow;
 
 		/// <summary> The event fires when an appearance advertisement frame
 		///   received. </summary>
@@ -11680,6 +11800,30 @@ namespace wclBluetooth
 		///   there is no any data available in the frame. </param>
 		/// <seealso cref="wclBluetoothLeAdvertisementFrameRawData" />
 		wclBluetoothLeManufacturerRawFrameEvent(OnManufacturerRawFrame);
+		/// <summary> The event fires when Microsoft CDP Beacon frame received. </summary>
+		/// <param name="Sender"> The object initiates the event. </param>
+		/// <param name="Address"> The Bluetooth LE advertiser's MAC address. </param>
+		/// <param name="Timestamp"> The frame's timestamp in Universal Time
+		///   format. </param>
+		/// <param name="Rssi"> The measured RSSI value in dBm at range between -100
+		///   dBm and +20 dBm at 1 dBm resolution. </param>
+		/// <param name="ScenarioType"> The beacon scenario. </param>
+		/// <param name="Version"> The protocol version. </param>
+		/// <param name="DeviceType"> The device type. </param>
+		/// <param name="SubVersion"> The protocol subversion. </param>
+		/// <param name="ShareNearBy"> If <c>True</c> then the NearBy share setting is
+		///   everyone rather than only my devices. </param>
+		/// <param name="AddressAsDeviceId"> <c>True</c> indicates that the Bluetooth
+		///   address can be used as the device ID. </param>
+		/// <param name="ExtendedDeviceStatus"> The extended device status. </param>
+		/// <param name="Salt"> The beacon salt (4 random bytes). </param>
+		/// <param name="Hash"> SHA256 Hash of Salt plus Device Thumbprint. </param>
+		/// <seealso cref="wclBluetoothLeCdpBeaconScenarioType" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconDeviceType" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconSalt" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconExtendedDeviceStatuses" />
+		/// <seealso cref="wclBluetoothLeCdpBeaconHash" />
+		wclBluetoothLeMicrosoftCdpBeaconFrameEvent(OnMicrosoftCdpBeaconFrame);
 		/// <summary> The <c>OnProximityBeaconFrame</c> event handler
 		///   prototype. </summary>
 		/// <param name="Sender"> The object initiates the event. </param>
@@ -11722,6 +11866,7 @@ namespace wclBluetooth
 		bool									FActive;
 		WCL_BLE_ADV_LIST*						FAdvertisements;
 		CwclBluetoothLeAdvertiserConnection*	FAdvertiser;
+		unsigned short							FInterval;
 		
 		/* Extended advertisement properties. */
 		
@@ -11779,22 +11924,13 @@ namespace wclBluetooth
 		/// <summary> Starts advertising. </summary>
 		/// <param name="Radio"> The <see cref="CwclBluetoothRadio" /> object used
 		///   to communicate with a remote Bluetooth device. </param>
-		/// <param name="Interval"> An advertising interval in 0.625 ms
-		///   units. The value must be in range between
-		///   <see cref="WCL_BLE_MIN_ADVERTISING_INTERVAL" /> and
-		///   <see cref="WCL_BLE_MAX_ADVERTISING_INTERVAL" />. The default value is
-		///   <see cref="WCL_BLE_DEFAULT_ADVERTISING_INTERVAL" />. </param>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
 		///   the WCL error codes. </returns>
 		/// <remarks> This feature is supported on Windows 10 with the Microsoft
 		///   Bluetooth drivers only. </remarks>
 		/// <seealso cref="CwclBluetoothRadio" />
-		/// <seealso cref="WCL_BLE_MIN_ADVERTISING_INTERVAL" />
-		/// <seealso cref="WCL_BLE_MAX_ADVERTISING_INTERVAL" />
-		/// <seealso cref="WCL_BLE_DEFAULT_ADVERTISING_INTERVAL" />
-		int Start(CwclBluetoothRadio* const Radio,
-			const unsigned short Interval = WCL_BLE_DEFAULT_ADVERTISING_INTERVAL);
+		int Start(CwclBluetoothRadio* const Radio);
 		/// <summary> Stops advertising. </summary>
 		/// <returns> If the function succeed the return value is
 		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
@@ -11802,6 +11938,12 @@ namespace wclBluetooth
 		/// <remarks> This feature is supported on Windows 10 with the Microsoft
 		///   Bluetooth drivers only. </remarks>
 		int Stop();
+
+		/// <summary> Restores the default advertising parameters. </summary>
+		/// <returns> If the function succeed the return value is
+		///   <see cref="WCL_E_SUCCESS" />. Otherwise the method returns one of
+		///   the WCL error codes. </returns>
+		int RestoreDefaults();
 		
 		/// <summary> Gets the Bluetooth LE advertisement object by its index. </summary>
 		/// <param name="Index"> The advertisement index. The <c>Index</c> must be
@@ -11833,9 +11975,18 @@ namespace wclBluetooth
 		/// <summary> Gets the advertising interval. </summary>
 		/// <returns> The advertising interval in 0.625ms units. </returns>
 		unsigned short GetInterval() const;
-		/// <summary> Gets the advertising interval. </summary>
-		/// <value> The advertising interval in 0.625ms units. </value>
-		__declspec(property(get = GetInterval)) unsigned short Interval;
+		/// <summary> Sets the advertising interval. </summary>
+		/// <param name="Value"> The advertising interval in 0.625ms units. The value must be in
+		///   range between 32 and 16384. </param>
+		/// <exception cref="wclEInvalidArgument"></exception>
+		/// <exception cref="wclEBluetoothLeBeacon"></exception>
+		void SetInterval(const unsigned short Value);
+		/// <summary> Gets and sets the advertising interval. </summary>
+		/// <value> The advertising interval in 0.625ms units. The value must be in
+		///   range between 32 and 16384. </value>
+		/// <exception cref="wclEInvalidArgument"></exception>
+		/// <exception cref="wclEBluetoothLeBeacon"></exception>
+		__declspec(property(get = GetInterval, put = SetInterval)) unsigned short Interval;
 
 		/// <summary> Gets the advertiser owner. </summary>
 		/// <returns> The <see cref="CwclBluetoothRadio" /> object owns the
