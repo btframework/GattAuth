@@ -24,10 +24,13 @@
 #include "..\Common\wclMessaging.h"
 #include "..\Communication\wclConnections.h"
 
+#include "..\DRI\wclDriAsd.h"
+
 #include "wclBluetoothErrors.h"
 
 using namespace wclCommon;
 using namespace wclCommunication;
+using namespace wclDri;
 
 namespace wclBluetooth
 {
@@ -2123,6 +2126,17 @@ namespace wclBluetooth
 		const unsigned short Major, const unsigned short Minor, const GUID& Uuid, \
 		const char TxRssi, const unsigned char Reserved, \
 		const wclBluetoothLeAdvertisementFrameRawData& Data)
+	/// <summary> The <c>OnDriAsdMessage</c> event handler prototype. </summary>
+	/// <param name="Sender"> The object initiates the event. </param>
+	/// <param name="Address"> The drone's MAC address. </param>
+	/// <param name="Timestamp"> The message's timestamp in Universal Time
+	///   format. </param>
+	/// <param name="Rssi"> The measured RSSI value in dBm at range between -100
+	///   dBm and +20 dBm at 1 dBm resolution. </param>
+	/// <param name="Raw"> The raw DRI ASD messages data. </param>
+	#define wclBluetoothLeDriAsdMessageEvent(_event_name_) \
+		__event void _event_name_(void* Sender, const __int64 Address, \
+		const __int64 Timestamp, const char Rssi, const wclDriRawData& Raw)
 	/// <summary> The <c>OnEddystoneTlmFrame</c> event handler
 	///   prototype. </summary>
 	/// <param name="Sender"> The object initiates the event. </param>
@@ -7034,6 +7048,9 @@ namespace wclBluetooth
 
 		/* Parsers. */
 
+		void ParseDriAsdMessage(const __int64 Address, const __int64 Timestamp,
+			const char Rssi, const unsigned short Uuid,
+			const wclBluetoothLeAdvertisementFrameRawData& Data);
 		void ParseEddystoneBeacons(const __int64 Address, const __int64 Timestamp,
 			const char Rssi, const unsigned short Uuid,
 			const wclBluetoothLeAdvertisementFrameRawData& Data);
@@ -7248,6 +7265,15 @@ namespace wclBluetooth
 			const unsigned short CompanyId, const unsigned short Major, const unsigned short Minor,
 			const GUID& Uuid, const char TxRssi, const unsigned char Reserved,
 			const wclBluetoothLeAdvertisementFrameRawData& Data);
+		/// <summary> Fires the <c>OnDriAsdMessage</c> event. </summary>
+		/// <param name="Address"> The drone's MAC address. </param>
+		/// <param name="Timestamp"> The message's timestamp in Universal Time
+		///   format. </param>
+		/// <param name="Rssi"> The measured RSSI value in dBm at range between -100
+		///   dBm and +20 dBm at 1 dBm resolution. </param>
+		/// <param name="Raw"> The raw DRI ASD messages data. </param>
+		virtual void DoDriAsdMessage(const __int64 Address, const __int64 Timestamp,
+			const char Rssi, const wclDriRawData& Raw);
 		/// <summary> Fires the <c>OnEddystoneTlmFrame</c> event. </summary>
 		/// <param name="Address"> The Bluetooth LE advertiser's MAC
 		///   address. </param>
@@ -7673,6 +7699,16 @@ namespace wclBluetooth
 		/// <param name="Data"> The additional frame data. </param>
 		/// <seealso cref="wclBluetoothLeAdvertisementFrameRawData" />
 		wclBluetoothLeAltBeaconFrameEvent(OnAltBeaconFrame);
+		/// <summary> The event fires when a Drone Remote ID ASD message
+		///   received. </summary>
+		/// <param name="Sender"> The object initiates the event. </param>
+		/// <param name="Address"> The drone's MAC address. </param>
+		/// <param name="Timestamp"> The message's timestamp in Universal Time
+		///   format. </param>
+		/// <param name="Rssi"> The measured RSSI value in dBm at range between -100
+		///   dBm and +20 dBm at 1 dBm resolution. </param>
+		/// <param name="Raw"> The raw DRI ASD messages data. </param>
+		wclBluetoothLeDriAsdMessageEvent(OnDriAsdMessage);
 		/// <summary> The <c>OnEddystoneTlmFrame</c> event handler
 		///   prototype. </summary>
 		/// <param name="Sender"> The object initiates the event. </param>
@@ -11089,6 +11125,8 @@ namespace wclBluetooth
 			const char Rssi, const unsigned short CompanyId, const unsigned short Major,
 			const unsigned short Minor, const GUID& Uuid, const char TxRssi,
 			const unsigned char Reserved, const wclBluetoothLeAdvertisementFrameRawData& Data);
+		void WatcherDriAsdMessage(void* Sender, const __int64 Address, const __int64 Timestamp,
+			const char Rssi, const wclDriRawData& Raw);
 		void WatcherEddystoneTlmFrame(void* Sender, const __int64 Address,
 			const __int64 Timestamp, const char Rssi, const unsigned long AdvCnt,
 			const unsigned short Batt, const unsigned long SecCnt, const double Temp,
@@ -11304,6 +11342,15 @@ namespace wclBluetooth
 			const char Rssi, const unsigned short CompanyId, const unsigned short Major,
 			const unsigned short Minor, const GUID& Uuid, const char TxRssi,
 			const unsigned char Reserved, const wclBluetoothLeAdvertisementFrameRawData& Data);
+		/// <summary> Fires the <c>OnDriAsdMessage</c> event. </summary>
+		/// <param name="Address"> The drone's MAC address. </param>
+		/// <param name="Timestamp"> The message's timestamp in Universal Time
+		///   format. </param>
+		/// <param name="Rssi"> The measured RSSI value in dBm at range between -100
+		///   dBm and +20 dBm at 1 dBm resolution. </param>
+		/// <param name="Raw"> The raw DRI ASD messages data. </param>
+		virtual void DoDriAsdMessage(const __int64 Address, const __int64 Timestamp,
+			const char Rssi, const wclDriRawData& Raw);
 		/// <summary> Fires the <c>OnEddystoneTlmFrame</c> event. </summary>
 		/// <param name="Address"> The Bluetooth LE advertiser's MAC
 		///   address. </param>
@@ -11733,6 +11780,16 @@ namespace wclBluetooth
 		/// <param name="Data"> The additional frame data. </param>
 		/// <seealso cref="wclBluetoothLeAdvertisementFrameRawData" />
 		wclBluetoothLeAltBeaconFrameEvent(OnAltBeaconFrame);
+		/// <summary> The event fires when a Drone Remote ID ASD message
+		///   received. </summary>
+		/// <param name="Sender"> The object initiates the event. </param>
+		/// <param name="Address"> The drone's MAC address. </param>
+		/// <param name="Timestamp"> The message's timestamp in Universal Time
+		///   format. </param>
+		/// <param name="Rssi"> The measured RSSI value in dBm at range between -100
+		///   dBm and +20 dBm at 1 dBm resolution. </param>
+		/// <param name="Raw"> The raw DRI ASD messages data. </param>
+		wclBluetoothLeDriAsdMessageEvent(OnDriAsdMessage);
 		/// <summary> The <c>OnEddystoneTlmFrame</c> event handler
 		///   prototype. </summary>
 		/// <param name="Sender"> The object initiates the event. </param>

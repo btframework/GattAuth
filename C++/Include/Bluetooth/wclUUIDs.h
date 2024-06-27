@@ -2435,4 +2435,9 @@ namespace wclBluetooth
 	/// <summary> Eddystone TLM beacon frame ID. </summary>
 	/// <remarks> This constant is defined for internal use only. </remarks>
 	#define EDDYSTONE_TLM_FRAME_ID	0x20
+
+	/* DRI UUIDs. */
+
+	/// <summary> The Drone Remote ID ASD service UUID. </summary>
+	#define DRI_ASD_UUID_16		0xFFFA
 }
