@@ -170,7 +170,7 @@ namespace wclBluetooth
 	/// <summary> Unable to resolve connected remote device address. </summary>
 	const int WCL_E_BLUETOOTH_UNABLE_TO_RESOLVE_ADDRESS = WCL_E_BLUETOOTH_BASE + 0x0043;
 	/// <summary> Unable to add new SDP record. </summary>
-	const int WCL_E_BLUETOOTH_UNABLE_ADD_ADP_RECORD = WCL_E_BLUETOOTH_BASE + 0x0044;
+	const int WCL_E_BLUETOOTH_UNABLE_ADD_SDP_RECORD = WCL_E_BLUETOOTH_BASE + 0x0044;
 	/// <summary> Unable to set server authentication and/or encryption
 	///   states. </summary>
 	const int WCL_E_BLUETOOTH_UNABLE_SET_SERVER_SECURITY = WCL_E_BLUETOOTH_BASE + 0x0045;
@@ -415,6 +415,13 @@ namespace wclBluetooth
 	const int WCL_E_BLUETOOTH_OPEN_RADIO_INVALID_NAME = WCL_E_BLUETOOTH_BASE + 0x00B2;
 	/// <summary> Too many opened Bluetooth Radio driver instances. </summary>
 	const int WCL_E_BLUETOOTH_OPEN_RADIO_COUNT_LIMIT = WCL_E_BLUETOOTH_BASE + 0x00B3;
+	/// <summary> <para> A Bluetooth driver is busy. </para>
+	///   <para> This error usually returned when your application tries to change
+	///   Radio state (ON/OFF) right inside OnStatusChanged event handler when
+	///   Radio was turned ON/OFF from system control panel. </para>
+	///   <para> If you receive this error simple add small delay (about 200 ms)
+	///   and try to switch radio state again. </para>. </summary>
+	const int WCL_E_BLUETOOTH_DRIVER_BUSY = WCL_E_BLUETOOTH_BASE + 0x00B4;
 
 	/* Bluetooth LE error codes. */
 
