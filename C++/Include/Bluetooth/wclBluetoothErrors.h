@@ -570,10 +570,10 @@ namespace wclBluetooth
 	const int WCL_E_BLUETOOTH_LE_WRITE_VALUE_TOO_LONG = WCL_E_BLUETOOTH_LE_BASE + 0x0038;
 	/// <summary> Unable to get Bluetooth LE Advertiser object. </summary>
 	const int WCL_E_BLUETOOTH_LE_UNABLE_GET_ADVERTISER = WCL_E_BLUETOOTH_LE_BASE + 0x0039;
-	/// <summary> Bluetooth LE advertising is already running on this radio. </summary>
-	const int WCL_E_BLUETOOTH_LE_ADVERTISING = WCL_E_BLUETOOTH_LE_BASE + 0x003A;
-	/// <summary> Unable to create advertising protection mutex object. </summary>
-	const int WCL_E_BLUETOOTH_LE_CREATE_ADVERTISING_MUTEX_FAILED = WCL_E_BLUETOOTH_LE_BASE + 0x003B;
+	/// <summary> Unable to start subscribing thread. </summary>
+	const int WCL_E_BLUETOOTH_LE_SUBSCRIBE_FAILED = WCL_E_BLUETOOTH_LE_BASE + 0x003A;
+	/// <summary> No subscribed clients found. </summary>
+	const int WCL_E_BLUETOOTH_LE_GATT_SERVER_NO_SUBSCRIBED_CLIENTS = WCL_E_BLUETOOTH_LE_BASE + 0x003B;
 	/// <summary> Unable to create connection completion event. </summary>
 	const int WCL_E_BLUETOOTH_LE_CREATE_CONNECTION_COMPLETION_EVENT_FAILED = WCL_E_BLUETOOTH_LE_BASE + 0x003C;
 	/// <summary> Unable to start LE devices discovering thread. </summary>
@@ -963,10 +963,6 @@ namespace wclBluetooth
 	const int WCL_E_BLUETOOTH_LE_GATT_SERVER_RESPONSE_ALREADY_SENT = WCL_E_BLUETOOTH_LE_BASE + 0x00DF;
 	/// <summary> A client is not connected to a Bluetooth device. </summary>
 	const int WCL_E_BLUETOOTH_LE_CLIENT_NOT_CONNECTED = WCL_E_BLUETOOTH_LE_BASE + 0x00E0;
-	/// <summary> Unable to start subscribing thread. </summary>
-	const int WCL_E_BLUETOOTH_LE_SUBSCRIBE_FAILED = WCL_E_BLUETOOTH_LE_BASE + 0x00E1;
-	/// <summary> No subscribed clients found. </summary>
-	const int WCL_E_BLUETOOTH_LE_GATT_SERVER_NO_SUBSCRIBED_CLIENTS = WCL_E_BLUETOOTH_LE_BASE + 0x00E2;
 
 	/* Wii Remote error codes. */
 
